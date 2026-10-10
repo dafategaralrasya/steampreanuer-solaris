@@ -323,8 +323,8 @@ Hasil yang diharapkan untuk data numerik baru pada Change Request akan ditentuka
 - [x] KT-01 s.d. KT-10 memiliki hasil harapan yang berasal dari jawaban/analisis siswa, termasuk revisi KT-03 dan KT-10.
 - [x] Nilai numerik, status stok/pembayaran, hak akses, dan leaderboard telah diperiksa konsistensinya terhadap spesifikasi final.
 - [x] Tidak ada klaim palsu bahwa aplikasi telah diuji.
-- [ ] **Unggah `docs/04-kasus-uji.md` ke GitHub dan periksa isi file pada branch `main`.**
-- [ ] **Periksa kesesuaian versi spesifikasi, rencana, dan kasus uji di repositori.**
-- [ ] **Buat commit Checkpoint 1 dengan pesan tepat `checkpoint: spesifikasi, kasus uji, dan rencana selesai`, sebelum mengunggah kode website apa pun.**
+- [x] **Unggah `docs/04-kasus-uji.md` ke GitHub dan periksa isi file pada branch `main`.**
+- [x] **Periksa kesesuaian versi spesifikasi, rencana, dan kasus uji di repositori.**
+- [x] **Buat commit Checkpoint 1 dengan pesan tepat `checkpoint: spesifikasi, kasus uji, dan rencana selesai`, sebelum mengunggah kode website apa pun.**
 
 **Etika kerja tim:** kami membedakan hasil wawancara, data simulasi, jawaban perhitungan siswa, bantuan AI, dan bukti pengujian aplikasi. PIN Akses (simulasi) tidak dapat melindungi data nyata. Karena repositori GitHub bersifat publik, kami tidak mengunggah data pribadi, PIN/kata sandi asli, API key, atau transaksi sungguhan.

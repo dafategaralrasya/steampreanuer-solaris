@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#073a6e">
+  <title>Riwayat Simulasi — SOLARIS</title>
+  <link rel="icon" href="./assets/logo-solaris.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/simulator.css">
+  <script type="module" src="./js/riwayat.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#catatan">Langsung ke riwayat</a>
+  <header class="site-header"><div class="container nav-inner">
+    <a class="brand" href="./index.html"><img src="./assets/logo-solaris.jpg" alt="" width="46" height="46"><span>SOLARIS<small>IoT Ecosystem</small></span></a>
+    <nav class="nav-links" aria-label="Menu riwayat"><a href="./index.html">Beranda</a><a href="./simulator.html">Simulator</a></nav>
+  </div></header>
+  <main id="catatan" class="sim-background"><div class="container sim-container">
+    <div class="sim-intro"><p class="section-kicker">PENCATATAN DATA VIRTUAL</p>
+      <h1>Riwayat Smart Irrigation</h1>
+      <p>Rekap pembacaan dan kontrol kedua kebun yang tersimpan pada browser ini. Bukan telemetry nyata.</p></div>
+    <section class="sim-panel"><h2>Riwayat tersimpan</h2>
+      <p id="jumlah-riwayat" aria-live="polite">Memuat data...</p>
+      <p id="riwayat-error" class="sim-message" data-status="salah" role="alert" hidden></p>
+      <p id="riwayat-kosong" class="sim-hint" hidden>Belum ada riwayat. Jalankan simulasi pertama untuk membuat catatan.</p>
+      <div class="sim-table-wrap"><table class="sim-table">
+        <caption>Catatan peristiwa dari Kebun Depan dan Kebun Belakang</caption>
+        <thead><tr><th>Waktu</th><th>Perangkat</th><th>Jenis</th><th>Kelembaban</th><th>Bawah / Atas</th><th>Mode</th><th>Pompa</th><th>Selisih</th><th>Keterangan</th></tr></thead>
+        <tbody id="baris-riwayat"></tbody>
+      </table></div>
+      <a class="btn btn-primary" href="./simulator.html">Kembali ke Simulator →</a>
+    </section>
+    <p class="sim-disclaimer">Pencarian, filter, dan ekspor CSV belum tersedia pada versi pertama. Fitur tersebut merupakan Change Request setelah Checkpoint 2.</p>
+  </div></main>
+  <footer class="site-footer"><div class="container footer-inner"><span>© 2026 SOLARIS · SMKN 8 Tangerang</span><span>Demonstrasi edukatif · Data virtual</span></div></footer>
+</body>
+</html>

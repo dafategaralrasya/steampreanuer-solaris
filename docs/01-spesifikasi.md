@@ -1,259 +1,254 @@
-# Spesifikasi Produk — PERWIRA Digital
+# Spesifikasi Produk — SOLARIS Smart Irrigation Simulator
 
 **Tim:** SOLARIS  
-**Slogan tim:** One Ecosystem, Endless Possibilities  
+**Slogan:** *One Ecosystem. Endless Possibilities.*  
 **Sekolah:** SMKN 8 Tangerang  
-**Produk:** PERWIRA Digital — Sistem Kasir dan Pencatatan Usaha Siswa  
-**Bentuk produk:** Prototipe website responsif, berorientasi penggunaan HP, tanpa perangkat keras atau IoT  
-**Penyimpanan:** `localStorage` pada satu browser/profil untuk simulasi challenge  
-**Alur inti:** Dari halaman beranda, petugas masuk memakai PIN kelas, memilih kelompok dan produk/jasa, menyelesaikan pembayaran, lalu memperoleh struk digital dan riwayat transaksi yang tersimpan.
+**Produk dalam proposal:** SOLARIS — platform ekosistem Internet of Things (IoT) berbasis web dan Progressive Web App (PWA)  
+**Produk untuk Challenge Vibe Engineering:** website pengenalan SOLARIS dan prototipe simulasi Smart Irrigation  
+**Bentuk:** website responsif, dapat dibuka melalui browser komputer maupun HP  
+**Penyimpanan prototipe:** `localStorage` pada browser dan profil yang sama  
+**Repositori:** `steampreneur-solaris`
 
-**Anggota tim:**
-1. Dafa Teger Alrasya — XI MK 1.
-2. Alif Mulyana — XI MK 1.
-3. Zaskia Aulia Putri Sheprida — XI ELIN 2.
+**Tim pengembang:** Dafa Teger Alrasya (XI MK 1), Alif Mulyana (XI MK 1), dan Zaskia Aulia Putri Sheprida (XI ELIN 2).
 
-**Pembimbing:** Andi Suhandi, S.Kom., MT.
+## 1. Latar belakang dan permasalahan
 
-## 1. Masalah
+### 1.1 Identitas dan arah produk
 
-### 1.1 Latar belakang
+SOLARIS dirancang sebagai platform ekosistem IoT terpusat dengan konsep *One Ecosystem. Endless Possibilities.* Dalam proposal STEAMpreneur 2026, SOLARIS memusatkan pengelolaan identitas dan kepemilikan perangkat, komunikasi data, pemantauan, riwayat, dan kontrol perangkat. Smart Irrigation menjadi implementasi awal untuk membuktikan konsep tersebut. Produk utama bukan hanya alat penyiram tanaman, melainkan platform yang dapat berkembang untuk beragam ekosistem IoT.
 
-PERWIRA (Pekan Berwirausaha) merupakan program kokurikuler untuk siswa kelas XI SMKN 8 Tangerang. Program ini memberi pengalaman menjalankan unit usaha mikro secara berkelompok. Sesuai Grand Design PERWIRA, **kelompok merupakan unit usaha**, sedangkan **kelas merupakan tim kompetisi**: total omzet suatu kelas berasal dari penjumlahan omzet tiga kelompoknya.
+Produk SOLARIS yang diajukan dalam proposal mencakup integrasi perangkat fisik, ESP32, API, database, dan web/PWA. Khusus untuk Challenge Vibe Engineering, tim mengembangkan **website terpisah berupa pengenalan produk dan simulator berbasis browser**, bukan mengganti atau menghubungkan sistem SOLARIS asli. Simulasi ini memperagakan dua perangkat virtual, validasi pembacaan kelembaban, pengendalian pompa secara otomatis maupun manual, dan penyimpanan riwayat. Seluruh hasil simulasi merupakan data contoh, bukan pembacaan sensor nyata atau perintah ke pompa fisik.
 
-PERWIRA diikuti tujuh kelas: XI MK 1, XI MK 2, XI ELIN 1, XI ELIN 2, XI TITL 1, XI TITL 2, dan XI TP. Setiap kelas memiliki tiga kelompok, sehingga terdapat **21 kelompok usaha**. Anggota setiap kelompok sekitar 11 siswa, dengan sekitar dua sampai tiga siswa menjalankan tugas penjualan secara bergilir.
+### 1.2 Masalah yang ditemukan
 
-Produk usaha tidak hanya makanan dan minuman, tetapi dapat berupa barang hasil kompetensi kejuruan maupun jasa reparasi. Empat bidang keahlian yang menjadi latar kegiatan adalah Teknik Mekatronika, Elektronika Industri, Teknik Instalasi Tenaga Listrik, serta Teknik Pendinginan Tata Udara dan Pemanasan. Jenis produk, harga, dan biaya produksi setiap kelompok berbeda.
+Proses penyiraman tanaman secara manual bergantung pada waktu luang, ingatan, dan penilaian visual pengguna. Penyiraman terlambat atau terlalu banyak dapat menimbulkan masalah bagi tanaman. Ketika pemilik bepergian, kondisi media tanam sulit dipantau secara langsung. Selain itu, kebutuhan air tidak selalu sama untuk setiap jenis dan ukuran tanaman. Pengguna membutuhkan penjelasan yang mudah dipahami mengenai kapan penyiraman perlu dimulai atau dihentikan, sedangkan calon pengembang perangkat harus memperhatikan keterbatasan sensor dan sistem pengamanannya.
 
-### 1.2 Masalah nyata di lapangan
+Temuan tersebut menjadi alasan memilih simulasi Smart Irrigation: pengunjung dapat mempelajari pengaruh pembacaan kelembaban, ambang batas, dan mode kontrol terhadap keputusan penyiraman tanpa memerlukan perangkat IoT fisik.
 
-Wawancara langsung pada kegiatan PERWIRA menemukan beberapa masalah:
+### 1.3 Tujuan produk challenge
 
-1. Penjualan dicatat menggunakan buku, catatan HP, Excel di HP, atau Google Spreadsheet; cara ini berbeda antar kelompok.
-2. Kantin sangat ramai pada istirahat pertama pukul **09.15–09.30 WIB** dan istirahat kedua pukul **11.45–12.30 WIB**, sehingga petugas kewalahan melayani pembeli sekaligus mencatat transaksi.
-3. Terdapat kesulitan menghitung pembayaran dan ketidaksesuaian antara uang yang diterima dengan catatan penjualan.
-4. Sebagian kelompok sudah menghitung harga dan HPP, tetapi pencatatan keuangan dan stok belum konsisten.
-5. Petugas membutuhkan rekap uang masuk, uang keluar, keuntungan, serta informasi stok.
-6. Alat utama yang dapat digunakan siswa untuk bertugas ialah **HP**; siswa tidak diperbolehkan membawa laptop ke lapak.
-7. Beberapa kelompok mengurangi antrean dengan pre-order (PO), tetapi penjualan spontan di kantin tetap banyak terjadi.
+1. Memperkenalkan visi, nilai guna, dan konsep platform IoT SOLARIS sesuai proposal pendaftaran.
+2. Memperagakan pengelolaan dua perangkat Smart Irrigation secara terpisah.
+3. Memvalidasi input kelembaban tanah dan pengaturan dua ambang batas.
+4. Menampilkan keputusan pompa otomatis berdasarkan *hysteresis*, serta simulasi kendali manual.
+5. Menghasilkan nilai numerik yang dapat dihitung dan diuji secara objektif.
+6. Menyimpan hasil simulasi dan menampilkannya kembali dalam riwayat setelah halaman dimuat ulang.
+7. Menyediakan dasar halaman rekap yang dapat dikembangkan melalui Change Request sesuai urutan challenge.
 
-### 1.3 Rumusan masalah dan tujuan
+Website ini dimaksudkan sebagai prototipe edukasi dan demonstrasi konsep, **bukan sistem pengendali penyiraman riil yang telah tervalidasi untuk penggunaan tanpa pengawasan**.
 
-Bagaimana menghadirkan kasir berbasis web yang mudah digunakan dari HP saat jam istirahat, menghitung transaksi tunai/QRIS secara akurat, memisahkan catatan antar kelompok, serta membantu siswa dan pembimbing mengevaluasi usaha?
+## 2. Pengguna dan kebutuhan
 
-Tujuan prototipe adalah mempercepat alur pencatatan, meminimalkan kesalahan hitung, menjaga jejak transaksi, serta menyediakan rekap omzet dan keuangan berdasarkan kelas/kelompok. Efektivitas dan percepatan nyata masih harus diuji; dokumen ini bukan klaim bahwa aplikasi telah terbukti mengurangi antrean.
+### 2.1 Pengunjung umum atau calon pengguna SOLARIS
 
-## 2. Pengguna
+Pengunjung membuka halaman pengenalan untuk memahami SOLARIS sebagai platform ekosistem IoT dan melihat Smart Irrigation sebagai contoh implementasi awal. Pengunjung dapat menekan tombol **Coba Simulasi** untuk masuk ke dashboard tanpa login.
 
-### 2.1 Siswa kelas XI — petugas usaha
+### 2.2 Pemilik tanaman dan pengguna pemula
 
-Siswa menggunakan HP untuk masuk dengan **PIN kelas**, memilih salah satu dari tiga kelompok dalam kelas tersebut, mengelola produk dan stok, mencatat modal dan pengeluaran, melakukan transaksi, memeriksa struk dan riwayat, serta melihat rekap ketiga kelompok dan total omzet **kelas sendiri**. Siswa tidak diberi tampilan laporan atau omzet kelas lain.
+Pengguna yang memiliki pengalaman merawat tanaman dapat memasukkan data kelembaban contoh, mengatur batas penyiraman, memahami keputusan ON/OFF, dan melihat kembali riwayat percobaan. Antarmuka perlu menjelaskan arti parameter secara singkat dan tidak mengasumsikan pengetahuan pemrograman atau elektronika.
 
-### 2.2 Guru PKK dan koordinator kokurikuler — pengelola laporan
+### 2.3 Pelajar, penguji, dan pembimbing
 
-Keduanya memakai **satu PIN pengelola bersama** untuk melihat laporan semua tujuh kelas dan 21 kelompok, termasuk Business Leaderboard dan rincian keuangan. Akses pengelola bersifat **hanya-baca**: tidak dapat menambah, mengubah, membatalkan transaksi, atau mengubah katalog.
+Pelajar dan penguji menggunakan simulator untuk memeriksa aturan bisnis, batas input, perpindahan mode, pemisahan data perangkat, hasil numerik, dan ketahanan riwayat setelah *refresh*. Mereka dapat mengikuti alur inti tanpa akun, perangkat keras, ataupun layanan eksternal.
 
-### 2.3 Pengunjung umum
+## 3. Validasi masalah melalui wawancara dan observasi
 
-Pengunjung dapat membuka **landing page publik** berisi penjelasan program PERWIRA, tujuan kewirausahaan, lima fase kegiatan (BUILD, TEST, GROW, COMPETE, REFLECT), dan pintu masuk siswa/pengelola. Pengunjung tidak langsung masuk ke kasir atau melihat laporan keuangan.
+Wawancara telah dilakukan terhadap empat narasumber yang bersedia diwawancarai dan direkam. Identitas mereka disamarkan dalam dokumentasi publik. Tiga wawancara berlangsung pada **2 Oktober 2026**, sedangkan wawancara keempat pada **3 Oktober 2026**. Ringkasan berikut berasal dari transkrip wawancara, bukan dari pengukuran kinerja aplikasi.
 
-### 2.4 Batasan akses pada prototipe
-
-PIN dibuat statis sebagai **PIN contoh** untuk demonstrasi; masing-masing kelas memiliki PIN berbeda dan ada satu PIN pengelola. Nilai PIN contoh serta petunjuk penggunaannya nanti dicantumkan dalam README untuk juri. Karena kode berjalan di browser, PIN klien **bukan mekanisme autentikasi yang aman**. Pembatasan tampilan berdasarkan peran hanya simulasi, tidak menjamin kerahasiaan terhadap orang yang memeriksa kode/browser.
-
-Data `localStorage` tidak otomatis tersinkron antardevice. Oleh karena itu, laporan gabungan 21 kelompok hanya dapat menunjukkan data yang tersedia pada **browser/profil yang sama**, termasuk data simulasi yang dimuat di sana. Sistem ini belum layak digunakan sebagai sumber pembukuan resmi lintas HP.
-
-## 3. Hasil wawancara calon pengguna
-
-**Pelaksanaan:** Jumat, **9 Oktober 2026**, secara **langsung di lapangan** ketika kegiatan PERWIRA berlangsung.  
-**Narasumber:** Siswa yang sedang bertugas berjualan, tanpa mencantumkan nama atau kontak pribadi. Pada pekan tersebut yang bertugas antara lain XI ELIN 1 Kelompok 2, XI ELIN 2 Kelompok 2, serta XI TITL 2 Kelompok 1. Beberapa kelompok menyampaikan masalah serupa.
-
-| Pertanyaan wawancara | Jawaban siswa (dirapikan tanpa mengubah makna) | Kebutuhan aplikasi |
+| Narasumber | Latar belakang | Pengalaman, jawaban, dan masukan yang relevan |
 |---|---|---|
-| Bagaimana transaksi dicatat saat ini? | Buku, catatan di HP, Excel di HP, atau Google Spreadsheet. | Pencatatan transaksi terpusat dalam alur kasir. |
-| Apa kendala saat melayani dan menghitung uang? | Kewalahan ketika pembeli datang bersamaan pada jam istirahat; uang dan catatan kadang tidak cocok. | Alur kasir cepat, perhitungan otomatis, riwayat yang dapat diperiksa. |
-| Apakah harga, modal, biaya, dan stok telah dicatat terpisah? | Sebagian kelompok sudah mencatat harga jual dan HPP; selebihnya belum konsisten. | Katalog dengan harga/HPP dan pencatatan modal serta biaya. |
-| Laporan apa yang diperlukan? | Uang masuk, uang keluar, keuntungan, dan stok bahan mentah sebelum menjadi barang jadi. | Rekap transaksi, keuangan sederhana, dan stok produk jadi; bahan baku dikembangkan nanti. |
-| Aplikasi dipakai lewat HP atau laptop? | HP, karena siswa tidak boleh membawa laptop; tampilan harus responsif. | Antarmuka mobile-first dengan tombol mudah disentuh. |
+| NS-1 — 2 Oktober 2026 | Guru teknik; gemar berkebun/merawat tanaman | Melakukan penyiraman rutin, pernah lupa sehingga tanaman layu, serta pernah mengalami penyiraman berlebihan. Menilai pengaturan penyiraman berdasarkan kelembaban membantu mengatasi masalah waktu. Mengharapkan akses aplikasi yang praktis dan tetap tersedianya pilihan kontrol manual. |
+| NS-2 — 2 Oktober 2026 | Guru Bahasa Inggris; berpengalaman berkebun bersama anak | Merawat tanaman dalam pot, pernah meninggalkan tanaman saat bepergian, dan mempertanyakan cara pemantauan dari jauh, kepraktisan pengguna awam, serta keamanan dan konsumsi sumber listrik. Menganggap penyiraman otomatis berbasis ambang kelembaban relevan untuk dicoba. |
+| NS-3 — 2 Oktober 2026 | Guru teknik; gemar berkebun/merawat tanaman | Menjelaskan bahwa kebutuhan air dipengaruhi ukuran, jenis tanaman, dan kondisi media. Pernah mengalami penyiraman berlebih dan menggunakan irigasi tetes manual ketika bepergian. Menyarankan kontrol manual, perhatian pada ketersediaan air, dan pengembangan sensor lain sebagai langkah lanjutan. |
+| NS-4 — 3 Oktober 2026 | Guru teknik; tidak berkebun | Memberikan perspektif teknis tentang keterbatasan satu sensor untuk jenis tanaman atau ukuran pot yang berbeda, posisi sensor, distribusi air, keandalan komponen, serta perawatan alat. Dalam observasi lapangan, menyarankan skenario awal tanaman yang relatif homogen untuk mengurangi kompleksitas interpretasi pembacaan sensor. |
 
-**Temuan tambahan:** Sejumlah kelompok menerapkan pre-order: pesanan dicatat lebih awal dan barang diambil sesuai waktu kesepakatan. Namun, **PO tidak menjadi fitur prototipe challenge**; fokus saat ini adalah penjualan langsung.
+**Pertanyaan pokok yang dieksplorasi:** kebiasaan penyiraman, cara mengenali tanah perlu air, pengalaman keterlambatan atau kelebihan penyiraman, kesulitan ketika bepergian, relevansi fitur monitoring dan otomatisasi SOLARIS, serta kebutuhan dan risiko teknis yang perlu diperhatikan.
 
-## 4. Fitur wajib dan alur inti
+**Kesimpulan validasi:** kebutuhan yang paling jelas adalah pengendalian waktu penyiraman berdasarkan kondisi kelembaban, keterbacaan informasi, pilihan kontrol manual, dan kesadaran terhadap keterbatasan sensor. Karena belum ada validasi atas akurasi perangkat fisik dalam challenge ini, simulator tidak mengklaim hasil penyiraman yang benar untuk semua jenis tanaman. Setiap perangkat virtual dianggap mewakili satu zona tanaman dengan karakteristik relatif seragam.
 
-Semua fitur berikut merupakan ruang lingkup yang disepakati untuk **produk challenge**. Pengembangan dilakukan bertahap; versi minimum alur inti harus berjalan sebelum commit Checkpoint 2. Fitur pencarian, filter, dan ekspor CSV sengaja dipisahkan sebagai **Change Request setelah Checkpoint 2**.
+## 4. Ruang lingkup dan fitur wajib
 
-### F01 — Landing page publik dan navigasi
+### F01 — Landing Page SOLARIS
 
-Beranda menjelaskan PERWIRA, tujuan kegiatan dan lima fase, dengan navigasi jelas menuju **Masuk Siswa** dan **Masuk Pengelola**. Tampilan berfungsi di HP maupun desktop.
+Halaman pertama memperlihatkan logo resmi tim, nama dan slogan SOLARIS, uraian platform ekosistem IoT, posisi Smart Irrigation sebagai implementasi awal, manfaat monitoring terpusat, gambaran peluang pengembangan multi-device, dan pengenalan tim. Tombol **Coba Simulasi** mengarahkan pengunjung ke dashboard tanpa registrasi atau login.
 
-### F02 — PIN kelas dan pengelola
+Konten landing page membedakan **konsep platform SOLARIS dalam proposal** dari **fitur yang benar-benar tersedia dalam simulator challenge**. Identitas, perangkat keras, API, autentikasi, telemetry langsung, dan PWA tidak dinyatakan sudah terimplementasi pada prototipe ini apabila belum tersedia.
 
-Terdapat tujuh pilihan kelas dengan PIN statis masing-masing. PIN benar membawa siswa ke ruang kelas terkait; PIN salah memunculkan pesan. Setelah berhasil masuk, siswa memilih Kelompok 1, 2, atau 3 sebagai kelompok aktif. Siswa dapat beralih antar kelompok **dalam kelas sendiri**, tetapi tidak mengakses data kelas lain melalui antarmuka normal. PIN pengelola membuka dashboard baca-saja untuk semua kelas.
+### F02 — Dashboard dan pemilihan perangkat
 
-### F03 — Katalog mandiri per kelompok
+Simulator menyediakan tepat dua perangkat virtual dengan identitas berbeda:
 
-Setiap kelompok dapat menambah dan mengubah produk/jasa beserta nama, jenis (barang atau jasa), kategori, harga jual standar, HPP per unit, dan status aktif. Kategori mendukung makanan, minuman, produk teknik, jasa, dan lainnya. Katalog tiap kelompok terpisah; produk yang dinonaktifkan tidak bisa ditambahkan ke transaksi baru. Perubahan harga katalog tidak mengubah riwayat transaksi lampau.
+- **Device 01 — Kebun Depan**.
+- **Device 02 — Kebun Belakang**.
 
-### F04 — Stok barang jadi
+Dashboard menampilkan dua perangkat tersebut beserta kelembaban terakhir yang valid (jika sudah ada), mode kontrol, status pompa, threshold, dan akses menuju riwayat. Perangkat dapat dipilih secara bergantian. Perubahan terhadap satu perangkat tidak boleh mengubah data perangkat lain.
 
-Produk fisik memiliki stok bilangan bulat mulai dari nol. Siswa dapat mengisi serta menambah stok. Stok barang berkurang **hanya setelah transaksi berhasil** dan dikembalikan saat transaksi dibatalkan. Sistem menolak transaksi melebihi stok. Jasa tidak membutuhkan stok barang. Stok bahan mentah, resep, dan pengurangan bahan berdasarkan produksi ditunda.
+### F03 — Input kelembaban dan threshold
 
-### F05 — Kasir dan keranjang belanja
+Pengguna dapat memasukkan persentase kelembaban tanah simulasi dan mengatur **threshold bawah** serta **threshold atas** secara terpisah untuk setiap perangkat.
 
-Petugas memilih produk/jasa dari kelompok aktif, mengatur jumlah, melihat subtotal dan total otomatis, serta dapat membuang item dari keranjang. Item sejenis yang ditambahkan lagi digabung jumlahnya. Harga barang mengikuti katalog; **harga jasa memiliki harga standar yang dapat disesuaikan khusus untuk satu transaksi** tanpa mengubah harga katalog. Keranjang tidak boleh kosong saat diproses.
+| Parameter | Aturan validasi |
+|---|---|
+| Kelembaban tanah | Bilangan bulat 0 sampai 100, termasuk kedua batas |
+| Threshold bawah | Bilangan bulat 0 sampai 99 |
+| Threshold atas | Bilangan bulat 1 sampai 100 |
+| Hubungan threshold | Threshold bawah wajib lebih kecil dari threshold atas |
+| Input kosong, bukan angka, negatif, pecahan, atau di luar rentang | Ditolak dengan pesan kesalahan yang jelas |
 
-### F06 — Pembayaran tunai dan QRIS manual
+Nilai tidak valid tidak boleh mengubah pengaturan tersimpan, status pompa, pembacaan terakhir, atau jumlah riwayat. Pengaturan awal masing-masing perangkat adalah **threshold bawah 30% dan threshold atas 70%**.
 
-- **Tunai:** petugas memasukkan uang diterima; bila kurang dari total transaksi, pembayaran ditolak. Bila cukup, aplikasi menampilkan kembalian.
-- **QRIS:** aplikasi menampilkan total dan meminta petugas memastikan pembayaran diterima; tidak terhubung ke bank, QRIS API, atau payment gateway. Transaksi QRIS **baru dianggap berhasil setelah petugas menekan konfirmasi**.
-- Transaksi belum berhasil tidak boleh menambah omzet dan tidak mengurangi stok.
+### F04 — Simulasi pengendalian otomatis dengan hysteresis
 
-### F07 — Struk digital dan riwayat
+Pada **Mode Otomatis**, keputusan pompa menggunakan pembacaan dan status otomatis sebelumnya milik perangkat yang dipilih:
 
-Transaksi berhasil mendapat nomor unik, waktu, kelas, kelompok, rincian item, kuantitas, harga pada saat transaksi, subtotal/total, metode pembayaran, dan kembalian untuk tunai. Struk dapat dibuka saat transaksi selesai dan dari riwayat. Harga serta HPP saat penjualan disimpan sebagai **snapshot** agar angka historis tidak berubah ketika katalog diedit.
+1. Kelembaban **kurang dari** threshold bawah: pompa **ON**.
+2. Kelembaban **lebih besar atau sama dengan** threshold atas: pompa **OFF**.
+3. Kelembaban **mulai dari threshold bawah hingga kurang dari threshold atas**: status otomatis sebelumnya **dipertahankan**.
 
-### F08 — Pembatalan dan pengembalian uang manual
+Status awal pompa setiap perangkat adalah **OFF**. Ketika belum ada pembacaan valid, tidak ada keputusan pembacaan yang dibuat dan status aman tetap OFF. Pembacaan pada angka yang tepat sama dengan threshold bawah berada di zona mempertahankan status; pembacaan tepat sama dengan threshold atas menghasilkan OFF.
 
-Siswa dapat membatalkan transaksi **kelas sendiri** dengan alasan wajib. Transaksi diberi status **Dibatalkan**, bukan dihapus. Omzet terkait tidak lagi dihitung, stok barang dikembalikan **sekali**, dan catatan pembatalan tetap tersimpan. Pembatalan kedua atas transaksi yang sama ditolak.
+Hysteresis bertujuan mengurangi perubahan status yang terlalu sering di sekitar satu titik ambang. Karena ini simulasi, keluaran ON/OFF hanya mengubah representasi status pada browser.
 
-Untuk transaksi yang telah dibayar, aplikasi menyimpan status pengembalian uang **Belum Dikembalikan** atau **Sudah Dikembalikan**. Pengembalian dilakukan manual di luar aplikasi, baik untuk pembayaran tunai maupun QRIS; tidak ada refund otomatis. Kewajiban pengembalian yang tertunda dilaporkan terpisah dari omzet. Struk yang dibuka kembali menunjukkan status pembatalan.
+### F05 — Mode Manual dan perpindahan mode
 
-### F09 — Modal awal dan pencatatan biaya
+Perangkat mempunyai dua mode: **Otomatis** dan **Manual**.
 
-Setiap kelompok mencatat modal awal dalam rentang **Rp0–Rp250.000**. Modal bukan omzet dan bukan laba. Siswa memasukkan HPP produk/jasa per unit dan mencatat **biaya operasional** kelompok (tanggal, keterangan, nominal). Biaya operasional dipisahkan dari HPP; pencatatan pengeluaran tidak boleh menyebabkan HPP dikurangkan dua kali. Perputaran modal rinci dan buku persediaan bahan baku belum diotomatisasi.
+- Dalam Mode Manual, pengguna menentukan status pompa virtual **ON** atau **OFF** tanpa mengikuti threshold.
+- Saat berpindah ke Manual, antarmuka meminta pilihan ON/OFF yang jelas. Status dan mode yang valid disimpan sebagai satu perubahan; perubahan mode dan status dicatat sebagai peristiwa.
+- Saat kembali ke Otomatis, status awal evaluasi otomatis diatur ke **OFF** sebelum menilai kelembaban valid terakhir. Jika kelembaban di bawah threshold bawah, hasilnya ON; jika sudah mencapai threshold atas atau berada di zona antara kedua ambang, hasilnya OFF.
+- Bila belum ada kelembaban valid terakhir, Mode Otomatis tetap OFF sampai ada simulasi pembacaan yang valid.
+- Pengoperasian kontrol manual di website **tidak sama dengan sakelar manual fisik yang dapat bekerja tanpa internet**. Tidak ada pompa sungguhan yang dikendalikan.
 
-### F10 — Rekap kelompok/kelas dan laporan guru
+### F06 — Hasil numerik selisih kelembaban
 
-Siswa dapat melihat rekap transaksi berhasil, omzet, HPP terjual, biaya operasional, laba, serta ringkasan pemasukan tunai/QRIS bagi **kelas sendiri** dan tiga kelompoknya. Laporan memiliki pilihan **hari tertentu** dan **total kumulatif**. Pengelola bisa melihat semua kelas/kelompok, totalnya, dan Business Leaderboard yang mengurutkan tujuh kelas berdasarkan total omzet ketiga kelompok; omzet sama memiliki peringkat sama. Omzet bukan ukuran tunggal keberhasilan pembelajaran.
+Setiap pembacaan simulasi yang valid menghasilkan nilai **selisih kelembaban menuju threshold atas** dalam satuan **poin persentase**:
 
-**Catatan urutan challenge:** penyimpanan tanggal transaksi dilakukan sejak awal. **Filter interaktif rentang tanggal, pencarian, dan unduh CSV baru ditambahkan dalam Change Request setelah Checkpoint 2**. Hasil akhir aplikasi harus menyediakan laporan harian, rentang tanggal, serta kumulatif sebagaimana disepakati.
+`selisih = maksimum(0, threshold_atas - kelembaban)`
 
-### F11 — Data demonstrasi
+Hasil tidak pernah bernilai negatif. Nilai ini hanya selisih dua persentase, **bukan prediksi lama pompa menyala, jumlah air, atau waktu sampai tanah mencapai ambang**. Nilai yang dipakai dalam perhitungan adalah threshold atas yang berlaku untuk perangkat tersebut pada saat simulasi.
 
-Aplikasi menyediakan tujuh kelas dan 21 kelompok, serta **data simulasi** produk dengan kategori/harga bervariasi dan transaksi contoh yang **dapat dimuat secara sengaja** untuk demonstrasi juri. Data diberi label jelas sebagai simulasi; tidak mengandung informasi pribadi atau transaksi nyata. Pemuatan ulang tidak boleh tanpa sengaja menggandakan contoh transaksi. Data demo tidak otomatis menghapus data yang sudah dicatat.
+### F07 — Penyimpanan otomatis dan pemisahan data
 
-### F12 — Responsif dan mudah dipakai saat jam padat
+Semua data disimpan pada `localStorage` browser yang sama. Setiap perangkat memiliki data tersendiri: ID, nama, threshold bawah dan atas, mode, status pompa, kelembaban valid terakhir, dan daftar riwayat.
 
-Rancangan mobile-first: tombol produk mudah disentuh, alur pembayaran ringkas, angka jelas, kesalahan ditampilkan dekat input, dan tidak ada gulir horizontal yang menghalangi fungsi utama pada lebar layar HP umum. Website tetap bisa dipakai melalui desktop untuk keperluan pengujian.
+- Tombol **Jalankan Simulasi** memvalidasi seluruh input, menghitung keputusan otomatis (jika Mode Otomatis) atau mempertahankan keputusan Manual, menghasilkan nilai numerik, lalu menyimpan pembacaan dan hasilnya **secara otomatis**.
+- Pembacaan yang valid menambah tepat **satu** entri riwayat; *refresh* atau berpindah halaman tidak boleh menduplikasi entri.
+- Peristiwa perubahan mode dan kontrol Manual dicatat dengan jenis peristiwa yang jelas, terpisah dari pembacaan kelembaban. Perubahan yang tidak benar-benar dilakukan pengguna tidak boleh menghasilkan entri palsu.
+- Data yang sudah tersimpan tetap ada ketika halaman diperbarui dan browser dibuka kembali menggunakan profil serta asal situs yang sama, selama data situs tidak dihapus.
+- Jika penyimpanan browser gagal atau tidak tersedia, aplikasi memberi pesan kesalahan dan **tidak menyatakan tindakan berhasil disimpan**. Tindakan tidak valid tidak boleh menulis data.
+- Tidak ada sinkronisasi otomatis antarperangkat fisik, akun browser berbeda, atau komputer lain.
 
-### Satu alur inti yang diuji dari awal sampai akhir
+### F08 — Halaman Riwayat dan Rekap
 
-1. Pengguna membuka beranda dan memilih **Masuk Siswa**.
-2. Pengguna memilih kelas dan memasukkan PIN, lalu memilih **kelompok aktif**.
-3. Pengguna memilih barang/jasa dan memasukkan jumlah; total dihitung otomatis.
-4. Pengguna menyelesaikan pembayaran tunai atau mengonfirmasi QRIS.
-5. Sistem menyimpan transaksi, menampilkan struk digital, dan menampilkan lagi transaksi di riwayat/rekap setelah halaman dimuat ulang.
+Halaman Riwayat memperlihatkan data tersimpan pada kedua perangkat. Untuk pembacaan, satu baris minimal berisi tanggal dan waktu, nama perangkat, kelembaban, threshold bawah, threshold atas, mode, status pompa setelah simulasi, serta selisih menuju threshold atas. Peristiwa kontrol manual dan pergantian mode diberi label jenis peristiwa agar tidak disamakan dengan pembacaan sensor.
 
-## 5. Di luar cakupan prototipe challenge
+Riwayat dapat dilihat kembali setelah *refresh* dan tetap memisahkan identitas perangkat dengan benar. Ketika belum ada data, halaman menampilkan pesan keadaan kosong yang jelas.
 
-- Pre-order (PO), antrean pesanan, dan pengambilan sesuai jadwal.
-- Stok **bahan mentah**, resep produksi, dan pengurangan bahan secara otomatis.
-- Diskon/promosi otomatis serta perhitungan pajak otomatis.
-- Integrasi QRIS/payment gateway, konfirmasi bank otomatis, dan refund transfer otomatis.
-- Autentikasi aman berbasis server, akun individu, serta sinkronisasi data antarpengguna/HP secara real-time.
-- Sistem akuntansi penuh: laporan posisi kas lintas perangkat, audit multi-pengguna, pembelian persediaan terintegrasi, pengembalian modal otomatis, kontribusi laba ke kas kelas, dan pembukuan yang menggantikan dokumen resmi sekolah.
-- Penilaian kokurikuler per individu, K3/5R digital, customer feedback, dan seluruh proses lima fase sebagai modul lengkap.
-- Integrasi alat IoT atau perangkat keras kasir dan pencetakan struk menggunakan printer khusus.
+Halaman Riwayat sengaja disiapkan untuk menerima **Change Request**. Fitur pencarian langsung, filter, keadaan tanpa hasil dengan pesan **“Data tidak ditemukan”**, dan unduhan CSV dari data yang sedang tampil **baru dikerjakan setelah Checkpoint 2 dan setelah analisis perubahan di-commit**, bukan pada versi pertama.
 
-## 6. Aturan bisnis dan perhitungan
+### F09 — Tampilan dan pengalaman pengguna
+
+Tampilan menggunakan identitas visual SOLARIS, tata letak responsif, dan navigasi yang mudah ditemukan. Form dan tombol kontrol dapat digunakan pada perangkat layar sentuh. Perbedaan Mode Otomatis dan Manual serta status ON/OFF harus jelas melalui teks, tidak hanya warna. Data simulasi ditandai dengan keterangan yang tidak menyesatkan.
+
+## 5. Satu alur inti dari awal sampai akhir
+
+1. Pengunjung membuka **Landing Page SOLARIS**, membaca pengenalan produk, kemudian menekan **Coba Simulasi**.
+2. Pengunjung masuk ke dashboard dan memilih **Kebun Depan** atau **Kebun Belakang**.
+3. Pengunjung memasukkan kelembaban, threshold bawah, dan threshold atas; sistem memvalidasi nilainya.
+4. Pengunjung menjalankan simulasi. Sistem menghitung status pompa sesuai mode dan hysteresis serta menampilkan nilai selisih menuju threshold atas.
+5. Sistem otomatis menyimpan hasil simulasi; pengguna membuka **Riwayat** untuk melihat kembali data yang tersimpan.
+6. Pengguna memuat ulang halaman dan memastikan data perangkat, pengaturan, serta riwayat tetap tersedia.
+
+Alur ini mencakup formulir dengan validasi, aturan numerik yang bisa diuji, penyimpanan data, dan rekap yang dapat ditinjau kembali.
+
+## 6. Aturan bisnis dan teknis yang dapat diuji
 
 | ID | Aturan |
 |---|---|
-| B01 | Ada **7 kelas**, masing-masing memiliki **3 kelompok**. Setiap data produk, transaksi, modal, dan pengeluaran selalu terkait kelas serta kelompok pemilik. |
-| B02 | Akses siswa hanya untuk kelas dari PIN yang benar; guru/koordinator baca-saja untuk semua kelas. PIN browser hanya simulasi hak akses, bukan jaminan keamanan. |
-| B03 | Nama produk wajib diisi; harga jual standar adalah bilangan bulat rupiah **lebih dari 0**; HPP adalah bilangan bulat rupiah **minimal 0**. |
-| B04 | Harga jasa bisa disesuaikan per transaksi menjadi bilangan bulat rupiah **lebih dari 0**; harga barang memakai katalog. Harga/HPP transaksi lama tidak berubah setelah katalog diedit. |
-| B05 | Jumlah pembelian per produk/jasa adalah bilangan bulat **1–99**, termasuk setelah menambahkan produk yang sama berulang kali. Untuk barang, jumlah tidak boleh melampaui stok. |
-| B06 | Subtotal item = `harga jual saat transaksi × jumlah`; **total transaksi = jumlah seluruh subtotal item**. Tidak ada diskon/pajak otomatis. |
-| B07 | Tunai: `uang_diterima >= total`; `kembalian = uang_diterima − total`. Uang kurang, kosong, negatif, pecahan rupiah, atau bukan angka valid ditolak. |
-| B08 | QRIS: transaksi hanya berhasil setelah konfirmasi manual oleh petugas. Metode pembayaran dan waktu dicatat. |
-| B09 | Transaksi berhasil ditulis sekali saja (tidak ganda karena ketuk tombol berulang); mengurangi stok barang satu kali dan menambah omzet sesuai total. |
-| B10 | Pembatalan membutuhkan alasan; transaksi disimpan dengan status Dibatalkan, stok dikembalikan satu kali, omzet dikurangi melalui pengecualian transaksi batal, dan pembatalan berulang ditolak. |
-| B11 | Refund manual mempunyai status Belum Dikembalikan/Sudah Dikembalikan; status tidak memulihkan omzet transaksi yang dibatalkan. Refund tertunda dilaporkan terpisah. |
-| B12 | Modal awal setiap kelompok bilangan bulat **Rp0–Rp250.000**, dicatat terpisah dan tidak ikut penjumlahan omzet. |
-| B13 | **Omzet kelompok = jumlah total transaksi berstatus berhasil**, tidak termasuk transaksi batal; **omzet kelas = penjumlahan omzet tiga kelompok kelas tersebut**. |
-| B14 | **HPP terjual = jumlah (HPP saat transaksi × jumlah)** dari item pada transaksi berhasil. |
-| B15 | **Laba kotor = omzet − HPP terjual**; **laba bersih = laba kotor − biaya operasional**. Biaya operasional disimpan menurut kelompok dan tanggal, dengan nilai bilangan bulat rupiah lebih dari 0. Pembelian bahan yang sudah masuk HPP tidak otomatis dihitung lagi sebagai biaya operasional. |
-| B16 | Rekap pemasukan tunai dan QRIS dihitung terpisah dari transaksi berhasil; nilainya tidak mencakup transaksi yang dibatalkan. Rekap pemasukan bukan saldo kas fisik atau bukti dana QRIS benar-benar masuk. |
-| B17 | Leaderboard guru berdasarkan omzet kumulatif kelas tertinggi ke terendah; omzet sama mendapat peringkat sama. Peringkat bukan nilai rapor siswa. |
-| B18 | Semua data proyek dipertahankan setelah refresh pada browser/profil yang sama melalui `localStorage`, selama penyimpanan browser belum dibersihkan. |
-| B19 | PIN demonstrasi dan data demo tidak boleh berupa kredensial, data pribadi, atau transaksi riil sekolah. |
+| B01 | Prototipe memiliki tepat dua perangkat virtual: Kebun Depan dan Kebun Belakang. Keduanya mempunyai state dan riwayat tersendiri. |
+| B02 | Akses simulator dibuka melalui tombol Coba Simulasi pada landing page tanpa login. |
+| B03 | Setiap perangkat memulai simulasi dengan threshold 30%/70%, mode Otomatis, dan status pompa OFF. |
+| B04 | Kelembaban hanya bilangan bulat 0–100%; threshold bawah 0–99%; threshold atas 1–100%; wajib bawah < atas. |
+| B05 | Input tidak valid ditolak tanpa mengubah data maupun menambah riwayat. |
+| B06 | Dalam Otomatis, kelembaban < batas bawah menghasilkan ON; kelembaban >= batas atas menghasilkan OFF; zona di antaranya mempertahankan status otomatis sebelumnya. |
+| B07 | Dalam Manual, pilihan ON/OFF pengguna mengendalikan **status virtual**, bukan pompa fisik. |
+| B08 | Perpindahan Manual ke Otomatis mereset dasar evaluasi ke OFF kemudian menilai pembacaan valid terakhir; jika belum ada pembacaan valid, tetap OFF. |
+| B09 | Selisih numerik = `max(0, batas_atas - kelembaban)` dalam poin persentase. |
+| B10 | Pembacaan berhasil menambah satu entri riwayat, menyimpan identitas perangkat, waktu, input, status, dan hasil perhitungan. |
+| B11 | Peristiwa Manual dan perubahan mode disimpan sebagai jenis riwayat terpisah dan tidak menghasilkan pembacaan kelembaban palsu. |
+| B12 | Refresh tidak menghapus atau menggandakan riwayat; data tetap ada pada browser/profil dan asal situs yang sama. |
+| B13 | Jika `localStorage` gagal, tampil pesan yang jelas; aplikasi tidak mengklaim penyimpanan berhasil. |
+| B14 | Riwayat menampilkan kembali data tersimpan dan membedakan peristiwa pembacaan dengan kontrol manual. |
+| B15 | Data simulator tidak boleh diklaim berasal dari ESP32, sensor nyata, API, atau pompa fisik. |
+| B16 | Pencarian, filter, dan ekspor CSV baru diterapkan setelah Checkpoint 2 serta commit analisis Change Request. |
 
-**Batas perhitungan:** seluruh nominal transaksi disimpan sebagai bilangan bulat rupiah dan diperiksa sebagai angka aman. Nilai uang dan kuantitas yang tidak valid harus menghasilkan pesan kesalahan, bukan `NaN`, nilai negatif tak sengaja, atau transaksi tersimpan.
+## 7. Hal yang tidak termasuk versi prototipe challenge
 
-## 7. Data yang disimpan
+- Koneksi langsung ke ESP32, perangkat keras pompa, relay, panel surya, atau sensor fisik.
+- Pemantauan tegangan panel surya, konsumsi energi, dan telemetri listrik.
+- Autentikasi akun sungguhan, Device ID rahasia, API key, device ownership berbasis server, serta database cloud.
+- Sinkronisasi data antar-HP atau antar-komputer dan monitoring jarak jauh terhadap kebun sungguhan.
+- Kendali manual fisik ketika tidak ada internet, sensor ketinggian air, debit air, pengukuran waktu/volume penyiraman, dan keselamatan perangkat riil.
+- Optimasi ilmiah dosis air per tanaman heterogen, kalibrasi sensor, pengukuran akurasi pertumbuhan tanaman, dan rekomendasi agronomi otomatis.
+- Modul PWA yang dapat diinstal, integrasi REST API, dan ekosistem IoT lain dari platform SOLARIS penuh.
+- Penghapusan massal riwayat atau manajemen pengguna berlapis pada versi pertama.
+- Pencarian, filter, dan CSV sebelum tahapan Change Request yang diwajibkan panitia.
 
-| Data | Contoh bentuk isi | Penyimpanan |
-|---|---|---|
-| Identitas kelas | XI ELIN 1 | `localStorage` (daftar awal aplikasi) |
-| Identitas kelompok | XI ELIN 1 — Kelompok 2 | `localStorage` |
-| Katalog | Produk makanan/jasa, jenis, harga, HPP, status | `localStorage` |
-| Stok barang jadi | Kuantitas tersedia per produk | `localStorage` |
-| Modal awal | Nominal modal per kelompok | `localStorage` |
-| Pengeluaran operasional | Tanggal, kelompok, keterangan, nominal | `localStorage` |
-| Transaksi | ID, tanggal/jam, kelas, kelompok, metode, status, item dan snapshot harga/HPP | `localStorage` |
-| Pembayaran tunai | Total, uang diterima, kembalian | `localStorage` |
-| Pembayaran QRIS | Total, metode, konfirmasi manual | `localStorage` |
-| Pembatalan/refund | Alasan, waktu pembatalan, status refund | `localStorage` |
-| Status data simulasi | Penanda dan identitas contoh agar tidak dimuat ganda | `localStorage` |
+Fitur-fitur platform SOLARIS yang lebih luas tetap dapat diperkenalkan sebagai **visi atau rencana produk asli**, bukan sebagai klaim keberhasilan simulator challenge.
 
-Data kelas dan produk contoh bersifat fiktif. Aplikasi tidak meminta nomor HP pembeli, alamat pelanggan, rekening bank, atau data pribadi siswa untuk melakukan transaksi.
+## 8. Kriteria selesai dan penerimaan
 
-## 8. Kriteria "selesai" (dapat diuji Ya/Tidak)
+Suatu kriteria dinyatakan terpenuhi apabila dapat diverifikasi melalui aplikasi yang berjalan dan bukti pengujian.
 
-Kriteria berikut adalah target penerimaan; **bukan pernyataan bahwa aplikasi sudah dibangun atau lolos tes**.
+| Kode | Kriteria penerimaan yang dapat diperiksa |
+|---|---|
+| S01 | Landing Page mengidentifikasi SOLARIS sesuai proposal, menampilkan logo, menjelaskan Smart Irrigation dan memberikan tautan Coba Simulasi. |
+| S02 | Dashboard dapat berpindah di antara dua perangkat tanpa data perangkat tercampur. |
+| S03 | Pengaturan awal 30%/70% tersedia dan dapat diubah secara valid per perangkat. |
+| S04 | Form menolak nilai kosong, huruf, pecahan, negatif, lebih dari 100, dan pasangan threshold tidak berurutan. |
+| S05 | Kasus batas kelembaban 0%, tepat batas bawah, tepat batas atas, dan 100% diproses sesuai aturan. |
+| S06 | Hysteresis mempertahankan status otomatis sebelumnya di antara dua ambang; tidak sekadar selalu mengembalikan OFF. |
+| S07 | Mode Manual dapat memilih ON atau OFF, dan perpindahan kembali ke Otomatis mengikuti aturan reset aman. |
+| S08 | Hasil selisih numerik mengikuti rumus, termasuk saat kelembaban melampaui batas atas. |
+| S09 | Setiap tindakan berhasil menambah jumlah entri yang benar; input salah tidak menambah riwayat. |
+| S10 | Pembacaan, threshold, mode, status pompa, dan riwayat bertahan setelah *refresh* pada browser/profil yang sama. |
+| S11 | Kegagalan penyimpanan ditangani dengan pesan kesalahan; keberhasilan tidak diklaim tanpa penyimpanan. |
+| S12 | Riwayat menampilkan data setiap perangkat, waktu, hasil perhitungan, serta membedakan kontrol manual dari pembacaan. |
+| S13 | Semua halaman utama dapat digunakan di layar HP maupun desktop tanpa hambatan navigasi mendasar. |
+| S14 | README menyediakan langkah menjalankan website dan tes yang dapat diikuti dari hasil *clone* repositori. |
+| S15 | Kasus uji manual serta unit test menghasilkan bukti yang sesuai dengan perilaku yang sebenarnya, bukan hasil yang diasumsikan. |
 
-1. Landing page tampil sebelum login dan menjelaskan program PERWIRA.
-2. Terdapat akses siswa dengan PIN kelas dan akses pengelola dengan PIN khusus; PIN salah ditolak.
-3. Siswa yang login hanya dapat melihat data/omzet kelasnya, dan dapat memilih serta mengelola tiga kelompok di kelas itu.
-4. Pengelola dapat melihat seluruh tujuh kelas, tetapi tidak memiliki kontrol ubah/tambah/batal transaksi.
-5. Tiap kelompok dapat menambah/mengubah katalog barang atau jasa dan produknya tidak bercampur dengan kelompok lain.
-6. Input produk dengan nama kosong, harga tidak valid, atau HPP negatif ditolak dengan pesan jelas.
-7. Stok barang jadi bertambah ketika dicatat dan berkurang setelah transaksi berhasil, bukan sebelum konfirmasi.
-8. Penjualan barang lebih besar dari stok ditolak; jasa tetap bisa ditransaksikan tanpa stok barang.
-9. Jumlah nol, pecahan, negatif, atau di atas 99 ditolak; jumlah berulang tetap dibatasi 99.
-10. Harga jasa dapat disesuaikan dalam transaksi tanpa mengubah harga katalog dan riwayat lama.
-11. Keranjang menampilkan total per item serta total akhir yang benar, tanpa diskon/pajak otomatis.
-12. Pembayaran tunai kurang dari total ditolak; pembayaran cukup menghitung kembalian dengan benar.
-13. QRIS yang belum dikonfirmasi tidak tersimpan sebagai transaksi berhasil.
-14. Transaksi berhasil menghasilkan struk dengan rincian, nomor unik, metode pembayaran, serta informasi kelas/kelompok.
-15. Struk dan riwayat transaksi lama tetap dapat dibuka setelah refresh browser yang sama.
-16. Transaksi batal mensyaratkan alasan; status tetap tersimpan dan stok/omzet terkoreksi satu kali.
-17. Status pengembalian uang Belum/Sudah Dikembalikan dapat dicatat dan riwayatnya tetap ada.
-18. Modal awal lebih dari Rp250.000 ditolak; modal tidak termasuk omzet atau laba.
-19. HPP terjual, biaya operasional, laba kotor, dan laba bersih dihitung dengan rumus yang ditetapkan.
-20. Omzet dan pemasukan tunai/QRIS dapat direkap per kelompok serta total kelas sesuai hak akses.
-21. Guru dapat melihat leaderboard tujuh kelas berdasarkan akumulasi omzet dan peringkat yang benar.
-22. Data demo produk dan transaksi dapat dimuat secara sengaja, berlabel simulasi, tanpa menggandakan transaksi contoh.
-23. Alur inti berjalan di layar HP dan desktop tanpa kendala gulir horizontal yang menghalangi transaksi.
-24. Seluruh kriteria numerik telah memiliki kasus uji dengan **hasil yang diharapkan dihitung serta diverifikasi sendiri oleh anggota tim** sebelum coding, termasuk input salah dan nilai batas.
-25. Website dapat dijalankan pada komputer bersih dengan mengikuti langkah README dan bukti pengujian disimpan di repositori.
+Kasus pengujian beserta nilai harapan yang dihitung dan diperiksa anggota tim dicatat pada `docs/04-kasus-uji.md`. Hasil aktual dan bukti tangkapan layar ditambahkan setelah implementasi dijalankan. Persyaratan dokumentasi dan commit mengikuti lembar Challenge Vibe Engineering.
 
-### Kriteria tambahan Tugas 3 — Change Request (dikerjakan setelah Checkpoint 2)
+## 9. Nilai STEAM, bisnis, dan keterbatasan
 
-1. Halaman rekap mempunyai pencarian langsung yang tidak membedakan huruf besar/kecil.
-2. Ada filter status/kategori atau rentang tanggal; pencarian dan filter dapat digunakan bersamaan.
-3. Pencarian atau filter tanpa hasil menampilkan pesan persis **"Data tidak ditemukan"**.
-4. Tersedia tombol **Unduh CSV** yang mengunduh hanya data yang sedang ditampilkan menurut pencarian dan filter.
-5. CSV memiliki header kolom; angka menggunakan nilai mentah tanpa `Rp` dan tanpa pemisah ribuan, serta dapat dibuka di Excel.
-6. Laporan harian, rentang tanggal, dan kumulatif berfungsi pada hasil akhir sesuai hak akses pengguna.
-7. Semua kasus uji sebelum Change Request tetap lulus sesudah perubahan kode.
+| Unsur | Penerapan pada website challenge |
+|---|---|
+| **Science** | Menggunakan kelembaban tanah sebagai parameter simulasi keputusan penyiraman, sambil mengakui pengaruh jenis tanaman, kondisi media, dan keterbatasan pengukuran. |
+| **Technology** | Website HTML/CSS/JavaScript, penyimpanan `localStorage`, dan penyajian data perangkat virtual secara terpusat. |
+| **Engineering** | Penyusunan aturan kontrol otomatis dengan hysteresis, kontrol manual, validasi state, isolasi perangkat, serta penanganan kondisi input salah. |
+| **Arts** | Identitas visual SOLARIS, landing page informatif, antarmuka yang jelas, dan pengalaman mobile-first. |
+| **Mathematics** | Persentase kelembaban, perbandingan dua ambang, dan penghitungan selisih ke batas atas dalam poin persentase. |
 
-Analisis dampak di `docs/analisis-change-request.md` harus dibuat dan **di-commit sebelum perubahan kode**, sesuai aturan challenge.
+Secara bisnis, website membantu calon pengguna dan calon pembeli memahami manfaat dasar ekosistem SOLARIS sebelum memakai atau membeli perangkat sesungguhnya. Konsep model perangkat siap pakai dan langganan platform berasal dari proposal SOLARIS. Simulator challenge **belum** mengimplementasikan transaksi komersial, perhitungan laba, layanan berlangganan, atau pengukuran peningkatan hasil pertanian.
 
-## 9. Strategi teknis dan batasan kejujuran produk
+## 10. Keamanan, privasi, dan kejujuran data
 
-- Teknologi yang direncanakan: HTML, CSS, dan JavaScript; penyimpanan `localStorage`; pengujian otomatis JavaScript dengan Node.js. Website tidak memerlukan hosting online.
-- Fokus desain **mobile-first** sesuai wawancara lapangan. Uji dilakukan juga pada lebar layar HP, input salah, dan nilai batas.
-- Buat fungsi perhitungan dan validasi terpisah dari antarmuka agar dapat diuji tanpa mengandalkan tampilan.
-- Pengerjaan bertahap per langkah/prompt; hasil diperiksa oleh tim. Catat log prompt, pengujian, kesalahan AI, review, serta commit sesuai ketentuan.
-- Riwayat transaksi adalah catatan prototipe pada satu browser, bukan sistem akuntansi atau bukti pembayaran QRIS yang terverifikasi bank.
-- Data demo boleh dilihat juri; jangan menaruh PIN asli, password, token, API key, data pribadi pelanggan, atau transaksi nyata pada repositori GitHub publik.
-- **Checkpoint 1** dilakukan setelah spesifikasi, kasus uji beserta hasil yang diharapkan dari perhitungan tim, dan rencana kerja selesai; belum boleh ada kode website sebelum Checkpoint 1. **Checkpoint 2** menandai versi pertama alur inti yang berjalan. Fitur pencarian/filter/CSV baru diimplementasikan setelah Checkpoint 2.
+1. Semua perangkat, angka, serta peristiwa pada aplikasi challenge diberi label **simulasi**.
+2. Tidak ada token, password, kredensial API, atau `.env` milik platform SOLARIS asli dalam repositori publik.
+3. Nama dan kontak pribadi narasumber tidak dicantumkan; hasil wawancara dilaporkan berdasarkan kode NS-1 sampai NS-4.
+4. Transkrip mentah dan rekaman wawancara tidak diperlukan dalam repositori publik. Ringkasan temuan digunakan sesuai konteks validasi yang telah diizinkan.
+5. `localStorage` bukan mekanisme sinkronisasi atau penyimpanan aman untuk data rahasia. Data dapat hilang apabila pengguna menghapus data situs atau memakai browser/profil lain.
+6. Tidak ada klaim bahwa website simulator menjamin keselamatan, kesehatan tanaman, atau kinerja pompa sungguhan.
+7. Bukti uji, tangkapan layar, hasil unit test, dan status fitur dilaporkan berdasarkan pelaksanaan nyata. Perbaikan serta kesalahan selama pengembangan dicatat dalam dokumen dan riwayat commit.
 
-## 10. Sumber kebutuhan
+## 11. Sumber kebutuhan dan dokumen acuan
 
-1. Wawancara langsung dengan siswa petugas PERWIRA, Jumat 9 Oktober 2026, saat operasional lapak sekolah; jawaban dirangkum pada Bagian 3.
-2. **Grand Design Program Kokurikuler PERWIRA (Pekan Berwirausaha), Kelas XI SMKN 8 Tangerang, Tahun Pelajaran 2026/2027** — pengelompokan usaha, keuangan, fase program, serta Business Leaderboard.
-3. **Lembar Challenge Peserta: Vibe Engineering — Sayembara STEAMpreneur, Direktorat SMK** — spesifikasi minimum, urutan checkpoint, kewajiban pengujian, dokumentasi, dan Change Request.
-4. Keputusan rancangan Tim SOLARIS dalam pembahasan kebutuhan bersama pembimbing: prototipe lokal, PIN kelas dan pengelola, kasir barang/jasa, QRIS manual, stok produk jadi, pembatalan/refund manual, modal/HPP/biaya/laba, struk, dan data simulasi.
+1. **Proposal STEAMPreneur SMK Tingkat Nasional Tahun 2026 — SOLARIS (One Ecosystem. Endless Possibilities.)**, dokumen proposal produk tim.
+2. **Transkrip wawancara Narasumber 1–4**, wawancara tanggal 2 dan 3 Oktober 2026, disimpan oleh tim sebagai bahan validasi internal.
+3. **Lembar Challenge Peserta: Vibe Engineering — Sayembara STEAMpreneur**, ketentuan alur inti, dokumen, pengujian, GitHub, Checkpoint, dan Change Request.
+4. **Kesepakatan ruang lingkup Tim SOLARIS, 11 Oktober 2026**, mengenai dua perangkat virtual, validasi angka, dua threshold, kontrol otomatis/manual, perhitungan numerik, dashboard, dan penyimpanan otomatis.
+
+---
+
+**Status dokumen:** Spesifikasi yang ditetapkan sebagai dasar perancangan prototipe challenge. Pelaksanaan fitur, hasil pengujian, dan perubahan berikutnya dibuktikan melalui berkas kode, kasus uji, log proses, dan riwayat commit repositori.

@@ -1,0 +1,43 @@
+/* Modul tampilan simulator; tidak mengubah gaya landing page. */
+.sim-background { min-height: 75vh; background: linear-gradient(145deg,#eef7ff,#f7fbff 55%,#e9f7f0); }
+.sim-container { padding-top: 58px; padding-bottom: 64px; }
+.sim-intro { max-width: 790px; margin-bottom: 30px; }
+.sim-intro h1 { font-size: clamp(2rem,4vw,3rem); line-height: 1.16; color: #0b315a; margin: 12px 0; }
+.sim-intro p { line-height: 1.7; color: #38516d; }
+.sim-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.sim-panel { background: white; padding: 28px; border-radius: 18px; border: 1px solid #d5e7f2; box-shadow: 0 15px 36px #0b315a0d; min-width: 0; }
+.sim-panel h2 { color: #10385e; font-size: 1.34rem; margin: 0 0 20px; }
+.sim-panel label { display: block; font-weight: 700; margin: 12px 0 6px; color: #183b5f; }
+.sim-panel input, .sim-panel select { width: 100%; padding: 12px 13px; border: 1px solid #a8bfd3; border-radius: 10px; font: inherit; color: #143455; background: #fff; }
+.sim-panel input:focus, .sim-panel select:focus { outline: 3px solid #8dc8f5; outline-offset: 1px; }
+.sim-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.sim-hint { font-size: 0.89rem; color: #566a7f; line-height: 1.55; }
+.sim-button { margin-top: 14px; width: 100%; justify-content: center; text-align: center; }
+.sim-controls { margin-top: 25px; padding-top: 17px; border-top: 1px solid #dce9f2; }
+.sim-controls h3 { color: #163a5e; margin: 0 0 8px; }
+.sim-controls p { font-size: 0.93rem; color: #566a7f; line-height: 1.5; }
+.sim-actions { display: flex; gap: 10px; }
+.sim-actions button, .sim-auto-button { min-height: 44px; border: 1px solid #84a8c5; background: #edf7ff; border-radius: 9px; color: #0a3968; font: inherit; font-weight: 700; cursor: pointer; padding: 10px 14px; }
+.sim-actions button { flex: 1; }
+.sim-auto-button { width: 100%; margin-top: 10px; }
+.sim-actions button:hover, .sim-auto-button:hover { background: #dceeff; }
+.sim-actions button:focus-visible, .sim-auto-button:focus-visible { outline: 3px solid #f0ba43; }
+.sim-actions button:disabled, .sim-auto-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.sim-device-name { font-weight: 700; color: #1e7793; }
+.sim-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sim-stats > div { background: #f1f7fc; border: 1px solid #e0ebf5; border-radius: 12px; padding: 16px; }
+.sim-stats span { display: block; font-size: 0.88rem; color: #516c85; }
+.sim-stats strong { display: block; font-size: 1.32rem; margin-top: 7px; color: #0c3761; overflow-wrap: anywhere; }
+.sim-message { margin-top: 20px; padding: 13px; border-radius: 10px; background: #e9f5ff; color: #114266; line-height: 1.5; }
+.sim-message[data-status='salah'] { background: #fff1ed; color: #8c291c; }
+.sim-message[data-status='berhasil'] { background: #eaf7ef; color: #1c6335; }
+.sim-disclaimer { margin-top: 20px; font-size: 0.9rem; color: #50677e; line-height: 1.6; }
+.sim-table-wrap { overflow-x: auto; margin: 22px 0 20px; border-radius: 10px; border: 1px solid #d6e4f2; }
+.sim-table { width: 100%; border-collapse: collapse; min-width: 925px; font-size: 0.9rem; }
+.sim-table caption { text-align: left; padding: 10px; color: #52677f; }
+.sim-table th, .sim-table td { padding: 11px 12px; border-bottom: 1px solid #e5eef5; text-align: left; vertical-align: top; }
+.sim-table th { background: #eaf4fb; color: #123a5f; white-space: nowrap; }
+.sim-table tr:nth-child(even) td { background: #f8fbfe; }
+[hidden] { display: none !important; }
+@media (max-width: 850px) { .sim-layout { grid-template-columns: 1fr; } }
+@media (max-width: 540px) { .sim-container { padding-top: 34px; } .sim-panel { padding: 18px; } .sim-two-col { grid-template-columns: 1fr; gap: 0; } .sim-stats { gap: 8px; } .sim-stats > div { padding: 12px; } .sim-stats strong { font-size: 1.14rem; } }

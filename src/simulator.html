@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#073a6e">
+  <title>Simulator Smart Irrigation — SOLARIS</title>
+  <link rel="icon" href="./assets/logo-solaris.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/simulator.css">
+  <script type="module" src="./js/app.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#simulasi">Langsung ke simulator</a>
+  <header class="site-header"><div class="container nav-inner">
+    <a class="brand" href="./index.html"><img src="./assets/logo-solaris.jpg" alt="" width="46" height="46"><span>SOLARIS<small>IoT Ecosystem</small></span></a>
+    <nav class="nav-links" aria-label="Menu simulasi"><a href="./index.html">Beranda</a><a href="./riwayat.html">Riwayat</a></nav>
+  </div></header>
+  <main class="sim-background" id="simulasi"><div class="container sim-container">
+    <div class="sim-intro"><p class="section-kicker">DEMONSTRASI INTERAKTIF</p>
+      <h1>Smart Irrigation Simulator</h1>
+      <p>Uji dua perangkat virtual SOLARIS. Data yang digunakan diisi pengguna, bukan dari sensor ESP32 atau pompa fisik.</p>
+    </div>
+    <div class="sim-layout">
+      <section class="sim-panel" aria-labelledby="pengaturan"><h2 id="pengaturan">Pengaturan Simulasi</h2>
+        <label for="pilih-perangkat">Pilih perangkat virtual</label>
+        <select id="pilih-perangkat"><option value="depan">Kebun Depan</option><option value="belakang">Kebun Belakang</option></select>
+        <form id="form-simulasi" novalidate>
+          <label for="kelembaban">Kelembaban tanah simulasi (%)</label>
+          <input type="number" id="kelembaban" min="0" max="100" step="1" inputmode="numeric" placeholder="Contoh: 25" required>
+          <div class="sim-two-col">
+            <div><label for="bawah">Threshold bawah (%)</label><input type="number" id="bawah" min="0" max="99" step="1" required value="30"></div>
+            <div><label for="atas">Threshold atas (%)</label><input type="number" id="atas" min="1" max="100" step="1" required value="70"></div>
+          </div>
+          <p class="sim-hint">Kelembaban harus 0–100; threshold bawah harus lebih kecil daripada threshold atas.</p>
+          <button class="btn btn-primary sim-button" type="submit">Jalankan Simulasi</button>
+        </form>
+        <div class="sim-controls" aria-label="Kontrol virtual">
+          <h3>Kontrol pompa virtual</h3>
+          <p>Tekan Manual ON atau OFF untuk memilih mode Manual sekaligus status pompa.</p>
+          <div class="sim-actions"><button type="button" id="manual-on">Manual ON</button><button type="button" id="manual-off">Manual OFF</button></div>
+          <button type="button" id="mode-otomatis" class="sim-auto-button">Kembali ke Mode Otomatis</button>
+        </div>
+      </section>
+      <section class="sim-panel" aria-labelledby="hasil"><h2 id="hasil">Hasil dan Status</h2>
+        <p class="sim-device-name" id="nama-perangkat">Kebun Depan</p>
+        <div class="sim-stats">
+          <div><span>Mode saat ini</span><strong id="status-mode">Otomatis</strong></div>
+          <div><span>Pompa Virtual</span><strong id="status-pompa">OFF</strong></div>
+          <div><span>Kelembaban terakhir</span><strong id="hasil-kelembaban">Belum ada</strong></div>
+          <div><span>Selisih ke threshold atas</span><strong id="hasil-selisih">—</strong></div>
+        </div>
+        <p class="sim-message" id="pesan" role="status" aria-live="polite">Pilih perangkat dan isi angka untuk mencoba simulasi.</p>
+        <p class="sim-hint">Selisih dalam poin persentase = maksimum(0, threshold atas − kelembaban). Bukan waktu atau volume air.</p>
+        <a class="btn btn-outline sim-button" href="./riwayat.html">Lihat Riwayat Simulasi →</a>
+      </section>
+    </div>
+    <p class="sim-disclaimer">SIMULASI BROWSER — Tidak mengirim perintah ke perangkat IoT, tidak membaca data sensor nyata, dan tidak menyinkronkan data antarlaptop.</p>
+  </div></main>
+  <footer class="site-footer"><div class="container footer-inner"><span>© 2026 SOLARIS · SMKN 8 Tangerang</span><span>Demonstrasi edukatif · Data virtual</span></div></footer>
+</body>
+</html>

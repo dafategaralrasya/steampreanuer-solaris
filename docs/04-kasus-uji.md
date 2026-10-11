@@ -1,330 +1,176 @@
-# 04 — Kasus Uji PERWIRA Digital
+# 04 — Kasus Uji SOLARIS Smart Irrigation Simulator
 
-**Tim:** SOLARIS — *One Ecosystem, Endless Possibilities*  
-**Produk:** PERWIRA Digital — Sistem Kasir dan Pencatatan Usaha Siswa  
+**Tim:** SOLARIS — *One Ecosystem. Endless Possibilities.*  
 **Sekolah:** SMKN 8 Tangerang  
-**Tanggal penyusunan hasil harapan:** 10 Oktober 2026  
-**Rujukan:** `docs/01-spesifikasi.md`, `docs/02-rencana.md`, dan aturan Challenge Vibe Engineering.  
-**Status dokumen:** Kasus uji disusun sebelum pembuatan website sebagai acuan pengembangan. **Pengujian pada aplikasi belum dilakukan.**
+**Produk:** Website pengenalan SOLARIS dan simulator Smart Irrigation berbasis browser  
+**Dasar pengujian:** `docs/01-spesifikasi.md`, proposal SOLARIS STEAMpreneur 2026, dan Lembar Challenge Vibe Engineering  
+**Tanggal penetapan hasil harapan:** 11 Oktober 2026  
+**Perangkat virtual:** Device 01 — Kebun Depan; Device 02 — Kebun Belakang  
+**Status dokumen:** Kasus uji dan hasil yang diharapkan telah disusun sebelum implementasi website versi SOLARIS; hasil aktual aplikasi belum diuji.
 
-## 1. Tujuan, tanggung jawab, dan batasan
+## 1. Tujuan dan cakupan
 
-Kami menyiapkan kasus uji ini **sebelum membuat kode website**. Dengan begitu, kami memiliki patokan untuk memeriksa apakah kasir, stok, dan laporan keuangan bekerja sesuai kebutuhan.
+Pengujian bertujuan memastikan satu alur inti SOLARIS benar-benar berjalan, mulai dari pengenalan produk, pemilihan perangkat, pengisian parameter, perhitungan hasil, penyimpanan otomatis, hingga tampilan riwayat. Pengujian juga memeriksa dua perangkat yang terpisah, batas validasi, pengendalian otomatis dengan *hysteresis*, mode Manual, penyimpanan `localStorage`, dan pesan kegagalan yang dapat dipahami.
 
-- **Tim yang menyusun dan akan menjalankan pengujian:** Dafa Teger Alrasya, Alif Mulyana, dan Zaskia Aulia Putri Sheprida, didampingi guru pembimbing Andi Suhandi, S.Kom., MT.
-- **Pembagian tugas:** Alif mengerjakan perhitungan dan menyiapkan pengujian. Dafa dan Zaskia membantu memeriksa jawaban dan akan ikut menguji aplikasi.
-- **Hasil yang diharapkan:** angka pada KT-01 sampai KT-10 berasal dari jawaban dan revisi siswa saat pembahasan, termasuk koreksi KT-03 dan KT-10. Angka tersebut **belum merupakan hasil uji aplikasi**.
-- **Bantuan AI:** kami menggunakan AI untuk membantu menyusun skenario, merapikan penulisan, dan meninjau konsistensi. Perhitungan hasil yang diharapkan dikerjakan oleh siswa. Penggunaan AI dalam pengerjaan proyek akan dicatat pada `docs/03-log-prompt.md`.
-- **Data contoh:** nama barang, harga, modal, kelompok, dan transaksi dalam dokumen ini merupakan **data simulasi**, bukan transaksi asli atau data pribadi pelanggan.
-- **Data awal:** setiap KT diuji secara **terpisah** menggunakan data awal yang ditentukan pada kasus tersebut. Jika data dari kasus lain dipakai sebagai contoh, data itu disiapkan kembali dari awal agar hasil tidak tercampur.
-- **Batasan prototipe:** `localStorage` hanya menyimpan data pada browser dan profil yang sama. PIN yang dipakai merupakan PIN demo, bukan sistem keamanan untuk data nyata.
+Kasus uji ditetapkan berdasarkan spesifikasi yang disepakati tim. Hasil yang diharapkan untuk KT-01 sampai KT-10 dihitung dan disampaikan anggota tim sebelum implementasi; seluruhnya telah diperiksa terhadap aturan yang berlaku. Nilai hasil pengujian aktual hanya dapat dicatat setelah kode dijalankan. Status *belum diuji* **bukan** berarti lulus.
 
-**Pencatatan setelah aplikasi jadi:** pada setiap KT dan UF kami akan mengisi tanggal pengujian, nama penguji, browser/perangkat, hasil sebenarnya, status **Lulus/Gagal**, dan screenshot di `docs/bukti/`. Untuk sekarang semuanya berstatus **Belum diuji**. Jika hasil tidak sesuai, kami mencatat masalahnya, memperbaiki program, lalu mengulangi pengujian tanpa mengubah hasil harapan hanya supaya tampak lulus.
+Website challenge menggunakan data **simulasi**. Tidak ada pembacaan sensor, kendali ESP32, pompa fisik, atau sinkronisasi lintas perangkat.
 
-## 2. Kasus Uji 01–10 — hasil harapan dari siswa
+## 2. Aturan bisnis acuan
 
-### KT-01 — Transaksi tunai, HPP, stok, dan kembalian
+| Kode | Aturan yang diuji |
+|---|---|
+| B01 | Dua perangkat virtual mempunyai pengaturan, mode, status, kelembaban terakhir, dan riwayat masing-masing. |
+| B02 | Pengunjung masuk dari Landing Page melalui **Coba Simulasi** tanpa login. |
+| B03 | Nilai awal setiap perangkat: threshold bawah 30%, threshold atas 70%, Mode Otomatis, pompa OFF; belum ada pembacaan yang tersimpan. |
+| B04 | Kelembaban dan kedua threshold berupa bilangan bulat; kelembaban 0–100, batas bawah 0–99, batas atas 1–100, dan batas bawah harus lebih kecil dari batas atas. |
+| B05 | Input tidak valid ditolak dengan pesan jelas, tanpa mengubah data atau menambah riwayat. |
+| B06 | Mode Otomatis: kelembaban < batas bawah → ON; kelembaban >= batas atas → OFF; selebihnya mempertahankan status otomatis sebelumnya. |
+| B07 | Mode Manual mengizinkan ON atau OFF pada pompa virtual tanpa mengikuti threshold. |
+| B08 | Kembali dari Manual ke Otomatis: mulai evaluasi dari OFF lalu nilai pembacaan valid terakhir, jika ada. |
+| B09 | Selisih menuju batas atas = `max(0, threshold_atas - kelembaban)`, dalam **poin persentase**. |
+| B10 | Satu pembacaan valid yang dijalankan menghasilkan tepat satu entri pembacaan yang otomatis tersimpan. |
+| B11 | Pergantian mode atau kendali Manual yang benar-benar dilakukan dicatat sebagai jenis peristiwa berbeda dari pembacaan. |
+| B12 | Data tetap ada setelah halaman diperbarui pada browser, profil, dan asal situs yang sama; refresh tidak menambah entri. |
+| B13 | Saat `localStorage` gagal, antarmuka menampilkan kegagalan dan tidak menyatakan data berhasil disimpan. |
+| B14 | Halaman Riwayat menampilkan kembali data kedua perangkat serta membedakan jenis peristiwa. |
+| B15 | Semua keluaran berlabel simulasi; tidak diklaim berasal dari sensor atau pompa nyata. |
+| B16 | Pencarian, filter, dan unduhan CSV **belum** diterapkan sebelum Checkpoint 2 dan commit analisis Change Request. |
 
-**Acuan spesifikasi:** F04–F07, F10; B06–B09, B13–B16.  
-**Prakondisi:** pilih satu kelompok uji dengan riwayat transaksi dan biaya kosong.
+**Aturan batas:** nilai tepat pada threshold **bawah** masuk daerah mempertahankan status; nilai tepat pada threshold **atas** mematikan pompa. Contoh: dengan batas 30%/70%, angka 30% tidak otomatis mengaktifkan pompa yang sebelumnya OFF.
 
-| Produk | Harga jual/unit | HPP/unit | Stok awal | Jumlah dibeli |
-|---|---:|---:|---:|---:|
-| Roti Bakar | Rp8.000 | Rp5.000 | 10 | 3 |
-| Es Teh | Rp3.000 | Rp1.500 | 15 | 2 |
+## 3. Kasus uji perhitungan inti — KT-01 sampai KT-10
 
-**Langkah:** pilih dua produk → masukkan jumlah → pilih tunai → masukkan uang diterima **Rp50.000** → konfirmasi pembayaran → buka struk, riwayat, dan rekap.
+Semua nilai pada kolom hasil harapan berikut telah dihitung oleh siswa dan dikonfirmasi sebelum implementasi. Setiap rangkaian yang disebut *lanjutan* memakai kondisi hasil kasus sebelumnya, bukan mereset status pompa.
 
-| Pemeriksaan | Hasil yang diharapkan (jawaban manual siswa) |
-|---|---:|
-| Omzet transaksi | **Rp30.000** |
-| Total HPP terjual | **Rp18.000** |
-| Laba kotor | **Rp12.000** |
-| Kembalian | **Rp20.000** |
-| Stok Roti Bakar sesudah transaksi | **7 unit** |
-| Stok Es Teh sesudah transaksi | **13 unit** |
+| ID | Kondisi dan urutan pengujian | Hasil yang diharapkan dari perhitungan siswa | Hasil aktual | Status |
+|---|---|---|---|---|
+| **KT-01** | Kebun Depan; awal OFF, Otomatis; kelembaban 25%; batas 30%/70%. | **ON; selisih 45 poin**. | Belum diuji | Belum diuji |
+| **KT-02** | Lanjutan KT-01, kelembaban 30%, batas 30%/70%. | **ON; selisih 40 poin**. Status ON dipertahankan saat tepat batas bawah. | Belum diuji | Belum diuji |
+| **KT-03** | Lanjutan KT-02, kelembaban 50%, batas 30%/70%. | **ON; selisih 20 poin**. Status ON dipertahankan di zona tengah. | Belum diuji | Belum diuji |
+| **KT-04** | Lanjutan KT-03, kelembaban 70%, batas 30%/70%. | **OFF; selisih 0 poin**. | Belum diuji | Belum diuji |
+| **KT-05** | Lanjutan KT-04, kelembaban 50%, batas 30%/70%. | **OFF; selisih 20 poin**. Status OFF dipertahankan di zona tengah. | Belum diuji | Belum diuji |
+| **KT-06** | Lanjutan KT-05, kelembaban 100%, batas 30%/70%. | **OFF; selisih 0 poin**. | Belum diuji | Belum diuji |
+| **KT-07** | Kondisi awal OFF, Otomatis; kelembaban 0%; batas 0%/100%. | **OFF; selisih 100 poin**. Kelembaban sama dengan batas bawah, tidak kurang darinya. | Belum diuji | Belum diuji |
+| **KT-08** | Kondisi awal OFF, Otomatis; kelembaban 0%; batas 1%/100%. | **ON; selisih 100 poin**. | Belum diuji | Belum diuji |
+| **KT-09** | Kebun Belakang; kondisi awal OFF, Otomatis; kelembaban 15%; batas 20%/60%. | **ON; selisih 45 poin**. | Belum diuji | Belum diuji |
+| **KT-10** | Kebun Depan memiliki pembacaan valid terakhir 50% dan batas 30%/70%; Mode Manual ON, kemudian beralih ke Otomatis. | **OFF; selisih 20 poin**. Dasar evaluasi Otomatis direset ke OFF. | Belum diuji | Belum diuji |
 
-**Perilaku tambahan:** hanya satu transaksi berhasil tersimpan; metode tunai, rincian harga, dan kembalian tampil pada struk; transaksi dapat dibuka kembali.  
-**Pelaksanaan:** Belum diuji.
+**Catatan pengujian berurutan:** KT-01–KT-06 adalah satu rangkaian kondisi hysteresis. KT-07, KT-08, dan KT-09 menggunakan kondisi awal tersendiri. KT-10 memerlukan persiapan keadaan Manual ON dan pembacaan valid terakhir 50%. Saat menjalankan masing-masing rangkaian, penguji memakai data awal yang sesuai agar hasil tidak dipengaruhi percobaan sebelumnya.
 
-### KT-02 — QRIS sebelum dan sesudah konfirmasi manual
+### Penjelasan dua kasus batas penting
 
-**Acuan:** F04–F07, F10; B08–B09, B13–B16.  
-**Prakondisi:** data kelompok uji kosong; buat barang berikut.
+**KT-07:** batas bawah 0%; pembacaan 0% **bukan** kurang dari 0%. Karena pompa awal OFF dan pembacaan masih di zona tengah (`0 <= kelembaban < 100`), status tetap OFF. Selisih `100 − 0 = 100` poin.
 
-| Produk | Harga jual/unit | HPP/unit | Stok awal | Jumlah dibeli |
-|---|---:|---:|---:|---:|
-| Air Mineral | Rp4.000 | Rp2.500 | 12 | 3 |
-| Sosis Bakar | Rp7.000 | Rp4.000 | 9 | 2 |
+**KT-10:** saat kembali dari Manual ke Otomatis, status awal evaluasi OFF. Dengan pembacaan valid terakhir 50% di antara threshold 30% dan 70%, status tetap OFF. Selisih `70 − 50 = 20` poin.
 
-**Langkah:** buat keranjang → pilih QRIS → **jangan konfirmasi**, periksa rekap/stok → petugas menekan **Konfirmasi Pembayaran** → periksa rekap dan riwayat.
+## 4. Kasus uji validasi formulir
 
-| Pemeriksaan | Sebelum konfirmasi | Setelah konfirmasi — jawaban siswa |
-|---|---:|---:|
-| Omzet tambahan | Rp0 | **Rp26.000** |
-| HPP terjual dari transaksi ini | Rp0 | **Rp15.500** |
-| Laba kotor dari transaksi ini | Rp0 | **Rp10.500** |
-| Stok Air Mineral | 12 | **9** |
-| Stok Sosis Bakar | 9 | **7** |
+**Prasyarat bersama:** pilih Kebun Depan pada Mode Otomatis dengan threshold 30%/70%, dan catat kondisi/riwayat sebelum pengujian. Untuk input yang ditolak, kondisi serta jumlah entri setelah pengujian harus **identik** dengan sebelum pengujian. Jika kasus valid memakai nilai baru, pengujian berikutnya dimulai dengan kondisi yang telah ditetapkan kembali.
 
-**Perilaku tambahan:** pembayaran dicatat sebagai QRIS setelah konfirmasi manual saja. Aplikasi **tidak** mengonfirmasi dana dari bank. Konfirmasi berulang tidak boleh menggandakan transaksi.  
-**Pelaksanaan:** Belum diuji.
+| ID | Input atau tindakan | Hasil yang diharapkan | Hasil aktual | Status |
+|---|---|---|---|---|
+| **VL-01** | Kelembaban dikosongkan; batas 30%/70%. | Ditolak; muncul pesan kelembaban wajib diisi; tidak ada simulasi atau entri baru. | Belum diuji | Belum diuji |
+| **VL-02** | Kelembaban berisi spasi saja. | Ditolak sebagai input kosong; tidak ada perubahan data. | Belum diuji | Belum diuji |
+| **VL-03** | Kelembaban `abc`. | Ditolak; pesan angka tidak valid; tidak ada perubahan data. | Belum diuji | Belum diuji |
+| **VL-04** | Kelembaban `-1`. | Ditolak; nilai di luar rentang 0–100. | Belum diuji | Belum diuji |
+| **VL-05** | Kelembaban `1.5`. | Ditolak; kelembaban wajib bilangan bulat. | Belum diuji | Belum diuji |
+| **VL-06** | Kelembaban `101`. | Ditolak; nilai di atas batas maksimum. | Belum diuji | Belum diuji |
+| **VL-07** | Kelembaban `0`, batas 30%/70%, awal OFF. | Diterima; pompa ON; selisih 70 poin; satu entri pembacaan baru. | Belum diuji | Belum diuji |
+| **VL-08** | Kelembaban `100`, batas 30%/70%, awal OFF. | Diterima; pompa OFF; selisih 0 poin; satu entri pembacaan baru. | Belum diuji | Belum diuji |
+| **VL-09** | Threshold bawah kosong; kelembaban 25, batas atas 70. | Ditolak; pesan batas bawah wajib diisi; konfigurasi lama tidak tertimpa. | Belum diuji | Belum diuji |
+| **VL-10** | Threshold atas kosong; kelembaban 25, batas bawah 30. | Ditolak; pesan batas atas wajib diisi; konfigurasi lama tidak tertimpa. | Belum diuji | Belum diuji |
+| **VL-11** | Threshold bawah `100` dan atas `100`. | Ditolak; batas bawah maksimum 99 dan tidak lebih kecil dari batas atas. | Belum diuji | Belum diuji |
+| **VL-12** | Threshold bawah `70` dan atas `30`. | Ditolak; batas bawah harus lebih kecil dari batas atas. | Belum diuji | Belum diuji |
+| **VL-13** | Threshold bawah `30` dan atas `30`. | Ditolak; threshold tidak boleh sama. | Belum diuji | Belum diuji |
+| **VL-14** | Threshold bawah `0`, atas `1`, kelembaban `0`, awal OFF. | Diterima; pompa OFF karena tepat batas bawah; selisih 1 poin; satu entri. | Belum diuji | Belum diuji |
+| **VL-15** | Threshold bawah `99`, atas `100`, kelembaban `98`, awal OFF. | Diterima; pompa ON; selisih 2 poin; satu entri. | Belum diuji | Belum diuji |
+| **VL-16** | Threshold bawah `30.5`, atas `70`, kelembaban `25`. | Ditolak; threshold wajib bilangan bulat. | Belum diuji | Belum diuji |
+| **VL-17** | Threshold bawah `30`, atas `101`, kelembaban `25`. | Ditolak; batas atas tidak boleh lebih dari 100. | Belum diuji | Belum diuji |
+| **VL-18** | Threshold bawah `-1`, atas `70`, kelembaban `25`. | Ditolak; batas bawah tidak boleh negatif. | Belum diuji | Belum diuji |
 
-### KT-03 — Stok tidak mencukupi: seluruh transaksi ditolak
+## 5. Kasus uji Mode Otomatis, Manual, dan peralihan
 
-**Acuan:** F04–F06; B05, B09.  
-**Prakondisi:** Air Mineral stok **9**, harga Rp4.000; Sosis Bakar stok **7**, harga Rp7.000. Keranjang berisi **10 Air Mineral** dan **2 Sosis Bakar**.
+**Prasyarat:** gunakan satu perangkat yang kondisinya diketahui; pemeriksaan jenis entri riwayat dilakukan bersamaan dengan perubahan status.
 
-**Langkah:** pilih kedua item → mencoba melanjutkan pembayaran → amati pesan, stok, dan rekap.
+| ID | Langkah dan kondisi | Hasil yang diharapkan | Hasil aktual | Status |
+|---|---|---|---|---|
+| **KM-01** | Kebun Depan Mode Otomatis, kelembaban 20%, batas 30%/70%, awal OFF; jalankan simulasi. | Pompa ON; selisih 50 poin; satu entri jenis pembacaan. | Belum diuji | Belum diuji |
+| **KM-02** | Setelah KM-01, ubah ke Mode Manual dan pilih OFF. | Mode Manual; status virtual OFF meski pembacaan terakhir 20%; perubahan kontrol tercatat, tanpa menciptakan pembacaan sensor baru. | Belum diuji | Belum diuji |
+| **KM-03** | Dalam Mode Manual, pengguna mengubah status menjadi ON. | Status virtual ON; riwayat mencatat peristiwa kendali Manual. | Belum diuji | Belum diuji |
+| **KM-04** | Dalam Mode Manual ON, masukkan kelembaban valid 85% dengan batas 30%/70%, jalankan simulasi. | Status pompa tetap ON mengikuti pilihan Manual; selisih 0 poin; pembacaan 85% tercatat. | Belum diuji | Belum diuji |
+| **KM-05** | Setelah KM-04, beralih kembali ke Mode Otomatis. | Status berubah menjadi OFF, karena pembacaan valid terakhir 85% >= batas atas; peristiwa perpindahan mode tercatat. | Belum diuji | Belum diuji |
+| **KM-06** | Mode Manual ON dengan pembacaan valid terakhir 25% dan batas 30%/70%; beralih ke Otomatis. | Pompa ON setelah evaluasi ulang karena 25% < 30%; selisih pembacaan terakhir 45 poin. | Belum diuji | Belum diuji |
+| **KM-07** | Mode Manual ON, belum ada pembacaan kelembaban valid; beralih ke Otomatis. | Pompa OFF; tidak ada pembacaan yang direkayasa atau selisih numerik fiktif; perpindahan mode tercatat. | Belum diuji | Belum diuji |
+| **KM-08** | Saat diminta memilih status Manual, pengguna membatalkan/tidak memberikan pilihan ON atau OFF. | Tidak terjadi perubahan mode, status, atau riwayat. | Belum diuji | Belum diuji |
+| **KM-09** | Dalam Mode Otomatis, pembacaan 25% → 50% → 70% → 50% dengan batas 30%/70%. | Urutan status ON → ON → OFF → OFF; selisih 45 → 20 → 0 → 20 poin. | Belum diuji | Belum diuji |
 
-| Pemeriksaan | Hasil yang diharapkan (revisi siswa) |
-|---|---:|
-| Penambahan omzet | **Rp0** |
-| Stok akhir Air Mineral | **9 unit** |
-| Stok akhir Sosis Bakar | **7 unit** |
+## 6. Kasus uji dua perangkat, penyimpanan, dan riwayat
 
-**Perilaku tambahan:** seluruh transaksi ditolak secara utuh; tidak ada penjualan berhasil yang tercatat, stok tidak boleh negatif. Pesan contoh: **“Stok Air Mineral tidak mencukupi. Silakan kurangi jumlah pembelian atau tambahkan stok.”**
+| ID | Langkah dan kondisi | Hasil yang diharapkan | Hasil aktual | Status |
+|---|---|---|---|---|
+| **DP-01** | Jalankan Kebun Depan pada 25%, batas 30%/70%; kemudian pilih Kebun Belakang yang belum digunakan. | Kebun Depan ON, selisih 45; Kebun Belakang masih awal OFF, batas 30%/70%, tanpa pembacaan/riwayat baru. | Belum diuji | Belum diuji |
+| **DP-02** | Ubah Kebun Belakang menjadi batas 20%/60%, jalankan kelembaban 15%. | Kebun Belakang ON, selisih 45; pengaturan Kebun Depan tetap 30%/70%. | Belum diuji | Belum diuji |
+| **DP-03** | Atur Kebun Depan ke Manual OFF, sementara Kebun Belakang Otomatis ON. | Mode dan status kedua perangkat tetap berbeda; perubahan Kebun Depan tidak memengaruhi Kebun Belakang. | Belum diuji | Belum diuji |
+| **DP-04** | Tampilkan riwayat setelah satu pembacaan masing-masing perangkat. | Ada dua entri pembacaan dengan identitas perangkat masing-masing; tidak tertukar atau berlipat. | Belum diuji | Belum diuji |
+| **PS-01** | Pada perangkat awal tanpa riwayat, jalankan satu simulasi valid satu kali. | Jumlah entri pembacaan bertambah tepat satu; hasil dan waktu dicatat. | Belum diuji | Belum diuji |
+| **PS-02** | Setelah PS-01, buka Riwayat lalu refresh halaman. | Jumlah entri tetap sama; tidak ada duplikasi akibat refresh. | Belum diuji | Belum diuji |
+| **PS-03** | Tutup dan buka kembali halaman pada browser/profil serta asal situs yang sama. | Dua perangkat, threshold, mode, status pompa, pembacaan terakhir, dan riwayat sama dengan data terakhir yang tersimpan. | Belum diuji | Belum diuji |
+| **PS-04** | Buka entri pembacaan pada Riwayat. | Nama perangkat, tanggal-waktu, nilai kelembaban, dua threshold, mode, status pompa, dan selisih yang tersimpan dapat dibaca. | Belum diuji | Belum diuji |
+| **PS-05** | Jalankan input salah setelah ada satu entri yang valid. | Muncul pesan kesalahan; jumlah riwayat, pengaturan, status, dan pembacaan terakhir tidak berubah. | Belum diuji | Belum diuji |
+| **PS-06** | Masuk ke halaman Riwayat saat belum ada peristiwa tersimpan. | Ada pesan keadaan kosong yang jelas; tidak menampilkan riwayat contoh seolah-olah nyata. | Belum diuji | Belum diuji |
+| **PS-07** | Periksa riwayat setelah pembacaan, pergantian mode, dan perintah Manual yang berhasil. | Jenis peristiwa dapat dibedakan; perintah kontrol tidak menambah entri pembacaan kelembaban palsu. | Belum diuji | Belum diuji |
+| **PS-08** | Simulasikan kondisi akses/tulis `localStorage` ditolak pada lingkungan pengujian, kemudian lakukan tindakan penyimpanan. | Pesan kegagalan penyimpanan terlihat; aplikasi tidak mengklaim berhasil menyimpan dan tidak menampilkan hasil gagal sebagai data tersimpan. | Belum diuji | Belum diuji |
+| **PS-09** | Gunakan browser atau profil yang berbeda dari tempat simulasi awal dilakukan. | Data tidak otomatis tersinkron; batasan ini dijelaskan secara jujur. | Belum diuji | Belum diuji |
 
-**Catatan pembelajaran:** pada jawaban awal siswa sempat menghitung nominal keranjang Rp54.000 dan stok negatif, lalu mengoreksinya setelah memahami prinsip bahwa transaksi yang gagal **tidak mengubah** stok atau omzet.  
-**Pelaksanaan:** Belum diuji.
+## 7. Pengujian alur utama, tampilan, dan keamanan
 
-### KT-04 — Validasi batas jumlah barang 1–99
+| ID | Langkah dan kondisi | Hasil yang diharapkan | Hasil aktual | Status |
+|---|---|---|---|---|
+| **UI-01** | Buka halaman awal website. | Nama, slogan, logo SOLARIS, pengenalan platform ekosistem IoT, dan Smart Irrigation sebagai implementasi awal tersedia. | Belum diuji | Belum diuji |
+| **UI-02** | Klik tombol **Coba Simulasi**. | Dashboard muncul tanpa registrasi atau login. | Belum diuji | Belum diuji |
+| **UI-03** | Jalankan alur Landing Page → pilih perangkat → isi data → hitung hasil → lihat Riwayat. | Pengunjung dapat menyelesaikan rangkaian yang berfungsi; hasil bukan hanya tampilan statis. | Belum diuji | Belum diuji |
+| **UI-04** | Ulangi alur pada ukuran layar HP dan desktop. | Form dapat dibaca dan digunakan, kontrol dapat diakses, serta tidak ada konten utama yang terpotong atau menghambat navigasi. | Belum diuji | Belum diuji |
+| **UI-05** | Periksa tampilan Mode Otomatis/Manual, ON/OFF, dan peringatan. | Makna status dibedakan melalui teks, bukan bergantung pada warna saja. | Belum diuji | Belum diuji |
+| **UI-06** | Periksa label dan keterangan data pada Landing Page, Dashboard, dan Riwayat. | Data dan pompa dinyatakan sebagai simulasi; tidak ada klaim pembacaan sensor real-time sungguhan. | Belum diuji | Belum diuji |
+| **UI-07** | Periksa berkas dalam repositori publik dan petunjuk README. | Tidak ada password, API key, token asli, `.env`, kontak narasumber, atau rekaman wawancara. | Belum diuji | Belum diuji |
+| **UI-08** | Ikuti panduan README setelah *clone* repositori ke folder baru. | Website dapat dijalankan dan pengujian dapat dilakukan sesuai langkah tertulis; versi alat dan sumber/lisensi dicantumkan. | Belum diuji | Belum diuji |
 
-**Acuan:** F05; B05–B06.  
-**Prakondisi:** Pulpen, harga jual **Rp2.000**, HPP **Rp1.200**, stok **120 unit**. Setiap percobaan memakai data awal yang di-reset; **tidak** menjalankan keenam percobaan secara berurutan.
+## 8. Rekap persiapan pengujian
 
-| Percobaan | Input jumlah | Harapan siswa |
+| Aspek | Jumlah kasus | Status |
 |---|---:|---|
-| A | 0 | Ditolak |
-| B | −1 | Ditolak |
-| C | 1,5 | Ditolak |
-| D | 100 | Ditolak |
-| E | 1 | Diterima |
-| F | 99 | Diterima |
+| Perhitungan inti dan hysteresis (`KT`) | 10 | Hasil harapan dihitung siswa dan telah diperiksa; belum diuji pada website |
+| Validasi formulir (`VL`) | 18 | Skenario dan hasil harapan ditetapkan; belum diuji pada website |
+| Otomatis, Manual, perpindahan mode (`KM`) | 9 | Skenario dan hasil harapan ditetapkan; belum diuji pada website |
+| Pemisahan dua perangkat (`DP`) | 4 | Skenario dan hasil harapan ditetapkan; belum diuji pada website |
+| Penyimpanan dan riwayat (`PS`) | 9 | Skenario dan hasil harapan ditetapkan; belum diuji pada website |
+| Alur, tampilan, keamanan (`UI`) | 8 | Skenario dan hasil harapan ditetapkan; belum diuji pada website |
+| **Total** | **58** | **Belum ada klaim kelulusan pengujian aplikasi** |
 
-| Pemeriksaan transaksi berhasil | Percobaan E: 1 unit | Percobaan F: 99 unit |
-|---|---:|---:|
-| Omzet | **Rp2.000** | **Rp198.000** |
-| HPP | **Rp1.200** | **Rp118.800** |
-| Laba kotor | **Rp800** | **Rp79.200** |
-| Stok akhir | **119 unit** | **21 unit** |
+### Rencana pengujian otomatis
 
-**Langkah:** satu per satu masukkan jumlah → amati validasi → untuk input yang diterima selesaikan transaksi dan cocokkan angka. Input ditolak tidak mengubah stok/omzet.  
-**Pelaksanaan:** Belum diuji.
+Logika berikut diprioritaskan untuk unit test menggunakan **Node.js `node --test`** setelah implementasi:
 
-### KT-05 — Pembatalan, pengembalian stok, omzet, dan refund manual
+- Validasi kelembaban, threshold, dan hubungan kedua threshold.
+- Rumus selisih menuju threshold atas.
+- Keputusan ON/OFF pada batas bawah, zona tengah, dan batas atas.
+- Rangkaian hysteresis dengan status otomatis sebelumnya ON dan OFF.
+- Perpindahan Manual ke Otomatis, termasuk pembacaan terakhir yang kosong.
+- Pemisahan state dua perangkat dan pembuatan entri riwayat.
 
-**Acuan:** F07–F08; B10–B11, B13–B14.  
-**Prakondisi:** buat ulang data awal seperti **KT-01** dalam lingkungan uji terpisah, kemudian selesaikan satu transaksi tunai: Roti Bakar 3 dari stok 10, Es Teh 2 dari stok 15. Pembeli membayar Rp50.000 dan sudah menerima kembalian Rp20.000.
+**Hasil unit test:** belum tersedia karena kode dan tes otomatis belum dijalankan. Jumlah lulus/gagal tidak dinyatakan sebelum ada keluaran pengujian yang nyata.
 
-**Langkah:** buka transaksi → batalkan dengan alasan **“Pembeli membatalkan pesanan sebelum barang diserahkan”** → periksa histori, stok dan rekap → amati status refund → tandai uang sudah dikembalikan → coba membatalkan transaksi yang sama sekali lagi.
+### Bukti pengujian
 
-| Pemeriksaan | Hasil yang diharapkan (jawaban siswa) |
-|---|---:|
-| Stok Roti Bakar setelah batal | **10 unit** |
-| Stok Es Teh setelah batal | **15 unit** |
-| Kontribusi omzet bersih transaksi setelah batal | **Rp0** |
-| Kontribusi laba kotor transaksi setelah batal | **Rp0** |
-| Nilai refund kepada pembeli | **Rp30.000** |
-| Status sebelum menyerahkan refund | **Belum Dikembalikan** |
-| Status setelah menyerahkan refund | **Sudah Dikembalikan** |
+Bukti berupa tangkapan layar alur, hasil formulir valid/tidak valid, dashboard dua perangkat, riwayat setelah *refresh*, dan keluaran pengujian otomatis disimpan di `docs/bukti/` **setelah** diuji. Nama berkas bukti dan hasil aktual dicatat saat pemeriksaan berlangsung, sesuai keadaan yang benar-benar ditemui.
 
-**Perilaku tambahan:** transaksi berstatus **Dibatalkan**, alasan dan struk historis tetap ada, pembatalan kedua ditolak. Refund berlangsung **manual**; sistem mencatat kewajiban refund tertunda secara terpisah dari omzet. Nilai refund adalah nilai transaksi, bukan seluruh uang Rp50.000 yang sebelumnya diserahkan.  
-**Pelaksanaan:** Belum diuji.
+## 9. Batas tahap dan tindak lanjut
 
-### KT-06 — Pemasukan tunai/QRIS, HPP, biaya, laba, dan modal
+Dokumen ini merupakan dasar pengujian **sebelum pembangunan website versi SOLARIS**. Pencarian langsung, filter, dan unduh CSV **tidak termasuk** kasus implementasi sebelum Checkpoint 2. Sesudah Checkpoint 2, tim mencatat analisis dampak pada `docs/analisis-change-request.md` dan melakukan commit **sebelum** perubahan kode. Kasus uji baru untuk pencarian, filter gabungan, pesan **“Data tidak ditemukan”**, CSV sesuai data yang tampil, dan pengujian regresi ditambahkan pada tahap tersebut.
 
-**Acuan:** F09–F10; B12–B16.  
-**Prakondisi:** XI ELIN 1 Kelompok 2, modal awal **Rp200.000**, tidak ada transaksi/biaya lain.
+Bug Hunt atas `bughunt-kasir.zip` memiliki aturan dan batas waktu terpisah, sehingga pengujiannya tidak dicampur dengan hasil simulasi SOLARIS.
 
-| Transaksi | Produk | Jumlah | Harga/unit | HPP/unit | Metode |
-|---|---|---:|---:|---:|---|
-| A | Jus Mangga | 4 | Rp8.000 | Rp4.000 | Tunai, berhasil |
-| B | Roti Isi | 3 | Rp10.000 | Rp6.000 | QRIS, dikonfirmasi |
+**Penetapan hasil harapan:** perhitungan KT-01–KT-10 dinyatakan oleh siswa sebagai `ON 45`, `ON 40`, `ON 20`, `OFF 0`, `OFF 20`, `OFF 0`, `OFF 100`, `ON 100`, `ON 45`, dan `OFF 20` secara berurutan. Hasil ini digunakan apa adanya setelah dicocokkan dengan spesifikasi hysteresis dan rumus selisih.
 
-**Biaya operasional:** kebersihan Rp6.000 dan transportasi Rp8.000. Biaya ini **berbeda** dari HPP dan tidak boleh dihitung dua kali.
-
-| Pemeriksaan | Hasil yang diharapkan (jawaban siswa) |
-|---|---:|
-| Omzet tunai | **Rp32.000** |
-| Omzet QRIS | **Rp30.000** |
-| Total omzet | **Rp62.000** |
-| Total HPP terjual | **Rp34.000** |
-| Laba kotor | **Rp28.000** |
-| Total biaya operasional | **Rp14.000** |
-| Laba bersih | **Rp14.000** |
-| Modal awal masuk omzet? | **Tidak** |
-
-**Langkah:** catat modal → buat dua transaksi berhasil → catat biaya operasional → buka rekap → cocokkan semua angka dan pemisahan modal.  
-**Pelaksanaan:** Belum diuji.
-
-### KT-07 — Hak akses siswa kelas dan pengelola
-
-**Acuan:** F01–F02, F10; B01–B02, B17, B19.  
-**Prakondisi:** tersedia tujuh kelas, masing-masing tiga kelompok (21 kelompok). Gunakan PIN **demo**, bukan PIN asli sistem sekolah.
-
-| Skenario | Hasil yang diharapkan (analisis siswa) |
-|---|---|
-| Siswa XI ELIN 1 login | Dapat memilih **3 kelompok dalam XI ELIN 1** |
-| Mengubah harga produk kelompok XI ELIN 1 | **Boleh** melalui akses siswa kelas sendiri |
-| Mengubah transaksi kelompok XI MK 1 | **Tidak boleh** |
-| Siswa XI ELIN 1 melihat omzet semua kelas | **Tidak boleh** |
-| Pengelola membuka laporan kelompok | Dapat melihat **21 kelompok** dari 7 kelas pada data lokal yang tersedia |
-| Pengelola membuka leaderboard | Menampilkan **7 kelas** |
-| Pengelola mengubah harga produk siswa | **Tidak boleh**; akses hanya-baca |
-| Memasukkan PIN yang tidak dikenal | **Login ditolak** |
-
-**Langkah:** uji login siswa, perpindahan kelompok kelas sendiri, navigasi ke kelas lain, login pengelola, dan percobaan perubahan katalog; periksa pembatasan UI. **Peringatan:** PIN JavaScript statis ini hanya simulasi hak akses dan tidak melindungi data dari pemeriksaan manual kode/browser.  
-**Pelaksanaan:** Belum diuji.
-
-### KT-08 — localStorage, refresh, riwayat, dan batas antarperangkat
-
-**Acuan:** F07, F10; B18.  
-**Prakondisi:** di XI ELIN 1 Kelompok 2 buat Es Jeruk harga **Rp5.000**, HPP **Rp3.000**, stok **20**; jual **4 unit** secara tunai hingga berhasil, ID contoh **TRX-001**.
-
-| Tindakan | Hasil yang diharapkan (analisis siswa) |
-|---|---|
-| Refresh halaman (`F5`) | Transaksi **TRX-001 tetap tersedia** |
-| Tutup dan buka browser/profil yang sama | Data **masih tersedia** |
-| Buka pada laptop kedua tanpa data yang sama | Transaksi **tidak otomatis muncul** |
-| Buka riwayat dan struk TRX-001 | Struk **dapat dibuka kembali** |
-| Hapus `localStorage` situs pada lingkungan uji | Data lokal **terhapus** |
-| Sisa stok setelah transaksi | **16 unit** |
-| Omzet transaksi setelah refresh | **Rp20.000** |
-
-**Langkah:** jalankan transaksi → cek stok/rekap → refresh → buka kembali browser → cek di laptop lain → buka struk → lakukan uji hapus penyimpanan **hanya di profil khusus pengujian**.  
-**Pelaksanaan:** Belum diuji.
-
-### KT-09 — Gabungan katalog barang dan jasa; harga jasa per transaksi
-
-**Acuan:** F03–F05; B03–B06.  
-**Prakondisi:** XI ELIN 2 Kelompok 1; item berikut aktif:
-
-| Item | Jenis | Harga default | HPP/unit | Stok awal |
-|---|---|---:|---:|---|
-| Kabel USB | Barang | Rp12.000 | Rp7.000 | 8 unit |
-| Jasa Perbaikan Kabel | Jasa | Rp15.000 | Rp5.000 | Tidak memakai stok |
-
-**Langkah:** masukkan **2 Kabel USB** dan **1 jasa**; khusus transaksi ini ubah harga jasa menjadi **Rp18.000**; konfirmasi QRIS → periksa rekap, stok, dan harga standar jasa di katalog → nonaktifkan Kabel USB dan coba menambahkannya ke transaksi baru.
-
-| Pemeriksaan | Hasil yang diharapkan (jawaban siswa) |
-|---|---:|
-| Total pembayaran | **Rp42.000** |
-| Total HPP | **Rp19.000** |
-| Laba kotor | **Rp23.000** |
-| Stok akhir Kabel USB | **6 unit** |
-| Harga standar jasa setelah transaksi | **Rp15.000 (tetap)** |
-| Jasa membutuhkan stok barang? | **Tidak** |
-| Kabel USB nonaktif dapat dijual di transaksi baru? | **Tidak boleh** |
-
-**Perilaku tambahan:** struk memakai harga jasa yang diterapkan pada transaksi, riwayat transaksi lama tidak berubah jika katalog diedit.  
-**Pelaksanaan:** Belum diuji.
-
-### KT-10 — Laporan omzet 21 kelompok dan leaderboard 7 kelas
-
-**Acuan:** F10; B01, B13, B17.  
-**Prakondisi:** pada **satu browser/profil yang sama**, masukkan data **omzet berhasil kumulatif simulasi** 21 kelompok berikut. Untuk pengujian laporan, data dapat dibentuk dari transaksi contoh yang totalnya sesuai setiap kelompok.
-
-| Kelas | Kelompok 1 | Kelompok 2 | Kelompok 3 | Total omzet kelas — hitungan siswa | Peringkat siswa |
-|---|---:|---:|---:|---:|---:|
-| XI MK 1 | Rp80.000 | Rp95.000 | Rp75.000 | **Rp250.000** | **4** |
-| XI MK 2 | Rp100.000 | Rp75.000 | Rp65.000 | **Rp240.000** | **5** |
-| XI ELIN 1 | Rp90.000 | Rp80.000 | Rp90.000 | **Rp260.000** | **2** |
-| XI ELIN 2 | Rp110.000 | Rp85.000 | Rp65.000 | **Rp260.000** | **2** |
-| XI TITL 1 | Rp70.000 | Rp75.000 | Rp55.000 | **Rp200.000** | **6** |
-| XI TITL 2 | Rp120.000 | Rp105.000 | Rp75.000 | **Rp300.000** | **1** |
-| XI TP | Rp60.000 | Rp85.000 | Rp55.000 | **Rp200.000** | **6** |
-| **Total** | | | | **Rp1.710.000** | |
-
-**Langkah:** isi data demo secara terkendali → login pengelola → buka rekap dan leaderboard → bandingkan total dan peringkat; login siswa → pastikan siswa hanya melihat omzet kelasnya sendiri.
-
-**Urutan yang diharapkan:** XI TITL 2 (1); XI ELIN 1 dan XI ELIN 2 (2 bersama); XI MK 1 (4); XI MK 2 (5); XI TITL 1 dan XI TP (6 bersama). Aturan peringkat seri: **1, 2, 2, 4, 5, 6, 6**.  
-**Riwayat koreksi:** siswa memperbaiki jawaban awal XI ELIN 2 dan jumlah seluruh kelompok. Nilai pada tabel ini adalah **jawaban revisi yang telah dikonfirmasi**.  
-**Pelaksanaan:** Belum diuji.
-
-## 3. Pengujian fungsional tambahan sesuai spesifikasi
-
-Kasus UF berikut menguji perilaku lain dari F01–F12 dan B01–B19. **Tidak ada angka hasil hitungan baru yang diklaim sebagai jawaban siswa.** Bila pengujian nyata kelak membutuhkan besaran numerik di luar KT-01–KT-10, tim harus menghitung dan menyepakati hasil harapannya sendiri **sebelum mengeksekusi kasus tersebut**, lalu mencatatnya melalui commit dokumen.
-
-| ID | Fitur yang diuji dan tindakan | Hasil perilaku yang diharapkan | Status |
-|---|---|---|---|
-| UF-01 | Buka beranda tanpa PIN | Informasi PERWIRA dan fase BUILD/TEST/GROW/COMPETE/REFLECT tampil, navigasi masuk siswa/pengelola tersedia | Belum diuji |
-| UF-02 | Coba PIN tidak dikenal dan PIN valid milik kelas lain | PIN tidak dikenal ditolak; PIN valid membuka kelas pemiliknya saja, bukan data kelas yang sedang dipilih sebelumnya | Belum diuji |
-| UF-03 | Beralih Kelompok 1→2→3 dalam kelas sama | Katalog, transaksi, modal, biaya, stok, dan omzet tetap terpisah antar kelompok | Belum diuji |
-| UF-04 | Form produk: nama kosong/spasi, harga kosong/nonnumerik, harga nol/negatif/pecahan rupiah | Validasi menolak dan menampilkan pesan yang jelas; data tidak tersimpan | Belum diuji |
-| UF-05 | Form HPP negatif/pecahan vs HPP nol | Nilai negatif dan pecahan ditolak; HPP nol diterima jika data lain sah | Belum diuji |
-| UF-06 | Tambah barang dengan stok awal bilangan bulat nonnegatif; lakukan penambahan stok | Stok berubah sesuai input sah dan tetap setelah refresh; input stok tidak sah ditolak | Belum diuji |
-| UF-07 | Menambah produk sama berkali-kali hingga total jumlah >99 atau >stok | Baris item digabung; penambahan yang melampaui salah satu batas ditolak, tanpa stok negatif | Belum diuji |
-| UF-08 | Kosongkan keranjang lalu tekan pembayaran | Ditolak; tidak tercatat transaksi berhasil | Belum diuji |
-| UF-09 | Masukkan pembayaran tunai kurang / kosong / negatif / pecahan / bukan angka | Ditolak; omzet dan stok tidak berubah; pesan kesalahan terbaca | Belum diuji |
-| UF-10 | Selesaikan transaksi berhasil dan klik konfirmasi berkali-kali | Satu ID transaksi unik saja, stok/omzet berubah satu kali | Belum diuji |
-| UF-11 | Edit harga/HPP katalog setelah transaksi sukses | Struk lama tetap menunjukkan harga/HPP saat transaksi; harga katalog baru berlaku hanya pada transaksi berikutnya | Belum diuji |
-| UF-12 | Coba batalkan tanpa alasan, lalu batalkan dengan alasan sah dua kali | Tanpa alasan ditolak; pembatalan pertama berhasil, yang kedua ditolak, stok tidak dipulihkan berulang | Belum diuji |
-| UF-13 | Pembatalan dan refund pada transaksi QRIS | Status refund dapat dicatat manual dan tetap muncul di histori; aplikasi tidak mengklaim refund bank otomatis | Belum diuji |
-| UF-14 | Isi modal awal negatif/pecahan/lebih dari Rp250.000 | Nilai di luar batas ditolak; modal yang sah tersimpan terpisah dari omzet dan laba | Belum diuji |
-| UF-15 | Catat biaya tanpa keterangan / nol / negatif / pecahan | Input tidak sah ditolak; biaya sah masuk laporan operasional, tidak menggandakan HPP | Belum diuji |
-| UF-16 | Nonaktifkan produk setelah ada riwayat penjualan | Tidak dapat ditambahkan ke transaksi baru; histori tetap terbaca | Belum diuji |
-| UF-17 | Buka laporan hari tertentu dan kumulatif | Laporan menampilkan transaksi dengan cakupan yang dipilih; peran siswa/guru tetap berlaku | Belum diuji |
-| UF-18 | Muat data demo, kemudian muat kembali | Data berlabel simulasi; tidak menggandakan transaksi demo secara tidak sengaja; tidak menghapus catatan lain tanpa persetujuan | Belum diuji |
-| UF-19 | Gagalkan penyimpanan `localStorage` pada lingkungan tes | Tidak muncul pesan sukses palsu; data tidak dianggap berhasil tersimpan dan pengguna mendapat pesan kesalahan | Belum diuji |
-| UF-20 | Uji alur inti pada layar HP lebar 360 px dan desktop | Kontrol terbaca/dapat disentuh, pesan validasi tampil jelas, tidak ada gulir horizontal yang menghalangi transaksi | Belum diuji |
-| UF-21 | Ikuti README pada komputer/folder baru | Proyek dapat dijalankan sesuai instruksi, tanpa rahasia/API key, server basis data, atau IoT | Belum diuji |
-| UF-22 | Periksa GitHub, dokumen, dan commit | `01-spesifikasi.md`, `02-rencana.md`, dan dokumen kasus uji ini sudah dicatat sebelum commit kode website pertama; riwayat sesuai tahapan checkpoint | Belum diuji |
-
-## 4. Rencana pelaksanaan dan pencatatan hasil
-
-Setelah aplikasi tersedia, kami akan menguji KT-01–KT-10 dan UF-01–UF-22, lalu menyimpan bukti screenshot ke `docs/bukti/`. Contoh nama bukti: `KT-01-struk-tunai.png`, `KT-02-qris-menunggu.png`, dan `UF-04-validasi-produk.png`. Status baru boleh diubah menjadi **Lulus** setelah hasilnya benar-benar kami lihat pada aplikasi.
-
-Tabel berikut akan kami isi saat pengujian berlangsung, sesuai format hasil sebenarnya, status, dan bukti dari template panitia.
-
-| ID | Hasil sebenarnya | Status | Bukti screenshot |
-|---|---|---|---|
-| KT-01 | Belum ada | Belum diuji | — |
-| KT-02 | Belum ada | Belum diuji | — |
-| KT-03 | Belum ada | Belum diuji | — |
-| KT-04 | Belum ada | Belum diuji | — |
-| KT-05 | Belum ada | Belum diuji | — |
-| KT-06 | Belum ada | Belum diuji | — |
-| KT-07 | Belum ada | Belum diuji | — |
-| KT-08 | Belum ada | Belum diuji | — |
-| KT-09 | Belum ada | Belum diuji | — |
-| KT-10 | Belum ada | Belum diuji | — |
-
-Untuk pemeriksaan UF-01–UF-22, hasil sebenarnya dan bukti juga akan dicatat saat kasus dijalankan; status awalnya tetap **Belum diuji**.
-
-| Data pelaksanaan | Kondisi pra-Checkpoint 1 |
-|---|---|
-| Kode/commit aplikasi yang diuji | Belum ada |
-| Tanggal mulai eksekusi uji | Belum dilaksanakan |
-| Perangkat, browser, dan versi | Akan dicatat saat tes |
-| Hasil aktual per kasus | Belum ada |
-| Jumlah kasus yang benar-benar lulus/gagal | Belum dapat dinilai |
-| Bukti screenshot | Belum dibuat |
-| Tes otomatis | Direncanakan dengan `node --test` di folder `tes/` setelah modul JavaScript dibuat |
-
-**Format pencatatan yang digunakan setelah tes berlangsung:** `ID kasus | tanggal/jam | penguji | input/aksi | hasil aktual | Lulus/Gagal | lokasi bukti | tindakan perbaikan/commit`. Apabila bug diperbaiki, ulangi tes terkait dan regresi kasus lama.
-
-## 5. Change Request — baru setelah Checkpoint 2
-
-**Belum diimplementasikan dan belum diuji.** Sesudah commit **`checkpoint: versi pertama alur inti berjalan`**, tim menganalisis dampak Change Request pada `docs/analisis-change-request.md` dan **membuat commit analisis sebelum mengubah kode**. Pengujian baru yang perlu ditambah kelak meliputi:
-
-- Pencarian langsung tanpa membedakan huruf besar/kecil.
-- Filter yang bekerja bersama pencarian (termasuk filter/rentang tanggal sesuai perubahan yang disepakati).
-- Pesan tepat **`Data tidak ditemukan`** untuk hasil kosong.
-- Unduhan CSV hanya berisi data **yang sedang tampil setelah filter/pencarian**, dengan header dan angka mentah tanpa `Rp` atau pemisah ribuan; dapat dibuka di Excel.
-- Pengujian regresi seluruh kasus lama agar fitur tambahan tidak merusak alur kasir, stok, struk, riwayat, atau laporan.
-
-Hasil yang diharapkan untuk data numerik baru pada Change Request akan ditentukan oleh siswa **sebelum** menjalankan pengujian tambahannya, bukan mengubah hasil tes lama setelah melihat program.
-
-## 6. Pemeriksaan sebelum Checkpoint 1
-
-- [x] Spesifikasi `01-spesifikasi.md` telah disetujui dan diletakkan di folder `docs/` berdasarkan laporan tim.
-- [x] Rencana `02-rencana.md` telah disetujui dan diletakkan di folder `docs/` berdasarkan laporan tim.
-- [x] KT-01 s.d. KT-10 memiliki hasil harapan yang berasal dari jawaban/analisis siswa, termasuk revisi KT-03 dan KT-10.
-- [x] Nilai numerik, status stok/pembayaran, hak akses, dan leaderboard telah diperiksa konsistensinya terhadap spesifikasi final.
-- [x] Tidak ada klaim palsu bahwa aplikasi telah diuji.
-- [x] **Unggah `docs/04-kasus-uji.md` ke GitHub dan periksa isi file pada branch `main`.**
-- [x] **Periksa kesesuaian versi spesifikasi, rencana, dan kasus uji di repositori.**
-- [x] **Buat commit Checkpoint 1 dengan pesan tepat `checkpoint: spesifikasi, kasus uji, dan rencana selesai`, sebelum mengunggah kode website apa pun.**
-
-**Etika kerja tim:** kami membedakan hasil wawancara, data simulasi, jawaban perhitungan siswa, bantuan AI, dan bukti pengujian aplikasi. PIN Akses (simulasi) tidak dapat melindungi data nyata. Karena repositori GitHub bersifat publik, kami tidak mengunggah data pribadi, PIN/kata sandi asli, API key, atau transaksi sungguhan.
+**Status akhir dokumen sebelum pengujian:** 58 skenario telah dirumuskan; implementasi, hasil aktual, bukti layar, dan hasil tes otomatis **belum dicatat sebagai lulus**.

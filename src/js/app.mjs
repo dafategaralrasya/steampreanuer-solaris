@@ -1,4 +1,4 @@
-import { keadaanAwal, jalankanBacaan, ubahKontrol } from './logic.mjs';
+import { keadaanAwal, jalankanBacaan, ubahKontrol, angkaBulat } from './logic.mjs';
 import { ambilKeadaan, simpanKeadaan } from './storage.mjs';
 
 const elemen = {
@@ -58,6 +58,47 @@ function terapkan(perhitungan, sukses) {
     render(true);
     tampilkanPesan(sukses);
   } catch (err) { tampilkanPesan(err.message, true); }
+}
+
+// Memberi umpan balik saat browser menolak huruf/tanda pada input type=number.
+// Penyimpanan dan status pompa TIDAK diubah sebelum submit valid berhasil.
+const aturanInput = [
+  { elemen: elemen.kelembaban, nama: 'Kelembaban', min: 0, max: 100 },
+  { elemen: elemen.bawah, nama: 'Threshold bawah', min: 0, max: 99 },
+  { elemen: elemen.atas, nama: 'Threshold atas', min: 1, max: 100 },
+];
+for (const aturan of aturanInput) {
+  const { elemen: field, nama, min, max } = aturan;
+  const pesanKarakter = `${nama} hanya boleh berisi angka bulat ${min}–${max}.`;
+  field.addEventListener('keydown', event => {
+    // Ctrl+A/C/V, navigasi, Backspace, Delete, Tab tetap boleh.
+    if (event.ctrlKey || event.metaKey || event.altKey || event.key.length !== 1) return;
+    if (!/^[0-9]$/.test(event.key)) {
+      event.preventDefault();
+      field.setAttribute('aria-invalid', 'true');
+      tampilkanPesan(pesanKarakter, true);
+    }
+  });
+  field.addEventListener('paste', event => {
+    const tempelan = event.clipboardData?.getData('text') ?? '';
+    if (!/^\d+$/.test(tempelan.trim())) {
+      event.preventDefault();
+      field.setAttribute('aria-invalid', 'true');
+      tampilkanPesan(pesanKarakter, true);
+    }
+  });
+  field.addEventListener('input', () => {
+    try {
+      // badInput: browser membatasi karakter tetapi belum menghasilkan angka valid.
+      if (field.validity?.badInput) throw new Error(pesanKarakter);
+      angkaBulat(field.value, nama, min, max);
+      field.removeAttribute('aria-invalid');
+      tampilkanPesan('Nilai diterima. Periksa semua isian lalu jalankan simulasi.');
+    } catch (err) {
+      field.setAttribute('aria-invalid', 'true');
+      tampilkanPesan(err.message, true);
+    }
+  });
 }
 
 elemen.pilih.addEventListener('change', () => {

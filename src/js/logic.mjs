@@ -16,12 +16,18 @@ export function keadaanAwal() {
 
 export function angkaBulat(nilai, nama, minimum, maksimum) {
   const teks = String(nilai ?? '').trim();
-  if (!/^\d+$/.test(teks)) throw new Error(`${nama} harus bilangan bulat ${minimum}–${maksimum}.`);
-  const angka = Number(teks);
-  if (!Number.isSafeInteger(angka) || angka < minimum || angka > maksimum) {
-    throw new Error(`${nama} harus bilangan bulat ${minimum}–${maksimum}.`);
+  if (teks === '') throw new Error(`${nama} wajib diisi.`);
+  if (/^-?\d+$/.test(teks)) {
+    const angka = Number(teks);
+    if (!Number.isSafeInteger(angka) || angka < minimum || angka > maksimum) {
+      throw new Error(`${nama} di luar rentang ${minimum}–${maksimum}.`);
+    }
+    return angka;
   }
-  return angka;
+  if (/^-?(?:\d+\.\d*|\.\d+)$/.test(teks)) {
+    throw new Error(`${nama} harus bilangan bulat, tanpa pecahan.`);
+  }
+  throw new Error(`${nama} hanya boleh berisi angka bulat ${minimum}–${maksimum}.`);
 }
 
 export function validasiBacaan({ kelembaban, bawah, atas }) {

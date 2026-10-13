@@ -1,8 +1,8 @@
 # SOLARIS — One Ecosystem. Endless Possibilities.
 
-**Tim:** SOLARIS  
-**Asal sekolah:** SMKN 8 Tangerang  
-**Kegiatan:** Challenge Vibe Engineering — Sayembara STEAMpreneur 2026  
+**Tim:** SOLARIS
+**Asal sekolah:** SMKN 8 Tangerang
+**Kegiatan:** Challenge Vibe Engineering — Sayembara STEAMpreneur 2026
 **Repositori:** https://github.com/dafategaralrasya/steampreneur-solaris
 
 ## Deskripsi Produk
@@ -22,6 +22,7 @@ Website memperkenalkan konsep ekosistem SOLARIS kepada pengunjung dan membantu c
 3. Pengunjung memasukkan kelembaban tanah dan mengatur ambang bawah serta ambang atas.
 4. Simulator memvalidasi input, menentukan status pompa virtual sesuai mode dan aturan *hysteresis*, serta menghitung selisih kelembaban menuju ambang atas.
 5. Hasil simulasi yang valid disimpan otomatis pada browser dan ditampilkan kembali melalui halaman riwayat, termasuk setelah halaman dimuat ulang.
+6. Pada halaman Riwayat, pengunjung dapat mencari catatan, menggabungkan filter perangkat dan status pompa, serta mengunduh CSV berisi hasil yang sedang ditampilkan.
 
 ## Aturan Utama Simulator
 
@@ -41,9 +42,11 @@ Data `localStorage` hanya tersimpan pada browser, profil, dan asal situs yang sa
 
 ## Status Pengembangan
 
-**Alur inti website sudah dapat dijalankan dan diuji.** Beranda, pemilihan dua perangkat, formulir, logika *hysteresis*, Mode Manual/Otomatis, penyimpanan browser, serta halaman Riwayat tersedia dalam salinan proyek yang diperiksa. Pada 13 Oktober 2026, `node --test` dijalankan pada kode di ZIP dengan Node.js v22.16.0 dan menghasilkan **38 tes lulus, 0 gagal**. Tim juga mengonfirmasi bahwa perbaikan validasi Dafa dan pengujian regresi Alif telah digabung ke `main` dan lulus. Jumlah tes pada salinan ZIP belum tentu sama dengan `main` terkini; lakukan `git pull` dan uji ulang saat integrasi dokumen.
+**Alur inti dan Change Request telah diimplementasikan.** Website menyediakan beranda, simulator dua perangkat, validasi angka, perhitungan *hysteresis*, Mode Manual/Otomatis, penyimpanan `localStorage`, halaman Riwayat, pencarian langsung, dua filter gabungan, pesan tanpa hasil, dan unduhan CSV dari hasil yang tampil.
 
-Fitur pencarian, filter, dan ekspor CSV merupakan bagian **Change Request**, sehingga pengembangannya dilakukan **setelah Checkpoint 2** dan setelah analisis dampak perubahan di-commit.
+Pengembangan Change Request dilakukan setelah Checkpoint 2 (`c686555`). Analisis dampak lebih dahulu di-commit sebagai `e104f41` dan digabung melalui Pull Request #9. Perubahan antarmuka Zaskia, logika Dafa, dan pengujian Alif selanjutnya digabung melalui Pull Request masing-masing. Pada **13 Oktober 2026**, tim mengonfirmasi pengujian lokal **61 tes lulus, 0 gagal** setelah penambahan 10 tes Change Request. Angka tersebut adalah hasil pengujian lokal yang dilaporkan tim, bukan klaim pemeriksaan independen sesudah semua merge.
+
+Untuk jejak pemeriksaan versi awal, arsip proyek lama yang ditinjau sebelumnya menghasilkan **38 tes lulus, 0 gagal** dengan Node.js v22.16.0; jumlah itu adalah kondisi arsip pada tahap sebelumnya, bukan jumlah tes Change Request.
 
 ## Cara Menjalankan
 
@@ -54,7 +57,7 @@ git clone https://github.com/dafategaralrasya/steampreneur-solaris.git
 cd steampreneur-solaris
 ```
 
-**Persyaratan:** Git (untuk clone), Node.js **v20 atau lebih baru** beserta perintah `node` yang sudah dikenali terminal, dan Chrome/Edge/Firefox modern. Pengujian yang tercantum di atas dilakukan pada Node.js **v22.16.0**. Tidak diperlukan `npm install` karena salinan proyek ini tidak menggunakan dependensi npm.
+**Persyaratan:** Git (untuk clone), Node.js **v20 atau lebih baru** beserta perintah `node` yang sudah dikenali terminal, dan Chrome/Edge/Firefox modern. Node.js **v22.16.0** digunakan pada pemeriksaan arsip sebelumnya; nomor versi Node.js untuk pengujian 61 tes terakhir tidak dicatat dalam hasil yang dikirim tim. Tidak diperlukan `npm install` karena proyek tidak menggunakan dependensi npm.
 
 Dari terminal yang berada di folder `steampreneur-solaris` (tempat file `server.mjs` berada), jalankan:
 
@@ -75,9 +78,22 @@ Jika terminal menampilkan `SOLARIS siap: http://localhost:3000`, buka alamat **h
 - Data lama masih muncul: proyek memakai `localStorage` pada browser/profil dan asal situs yang sama. Gunakan profil pengujian terpisah jika ingin keadaan awal bersih; jangan menghapus data browser pribadi tanpa memeriksa isinya.
 - Hindari membuka `src/index.html` langsung lewat `file://`, karena aplikasi memakai modul JavaScript dan penyimpanan menurut asal situs. Gunakan alamat server di atas.
 
+## Pencarian, Filter, dan Unduh CSV pada Riwayat
+
+Fasilitas ini ditambahkan pada tahap **Change Request**, setelah versi pertama dinyatakan berjalan dan analisis perubahan dicatat pada [`docs/analisis-change-request.md`](docs/analisis-change-request.md).
+
+1. Buka **Riwayat** dari navigasi simulator. Data berasal dari hasil simulasi yang tersimpan pada browser tersebut.
+2. Ketik kata pada **Cari Riwayat**. Hasil berubah langsung saat mengetik, tanpa membedakan huruf besar dan kecil. Pencarian menggunakan nama perangkat, jenis peristiwa, mode, status pompa, dan keterangan.
+3. Pilih **Filter Perangkat**: Semua Perangkat, Kebun Depan, atau Kebun Belakang.
+4. Pilih **Filter Status Pompa**: Semua Status, ON, atau OFF. Pencarian dan kedua filter dapat digunakan bersamaan; baris yang tampil harus memenuhi seluruh pilihan yang aktif.
+5. Bila riwayat tersedia tetapi tidak ada kecocokan, halaman menampilkan **“Data tidak ditemukan”**. Bila tidak pernah ada catatan, halaman menggunakan pesan **belum ada riwayat**.
+6. Klik **Unduh CSV** untuk menyimpan `riwayat-solaris.csv`. Berkas hanya memuat baris yang sedang tampil setelah penyaringan, dengan judul kolom dan urutan hasil yang sama. Bila tidak ada hasil cocok, CSV berisi judul kolom saja.
+
+Kolom CSV adalah `Waktu`, `Perangkat`, `Jenis`, `Kelembaban`, `Batas Bawah`, `Batas Atas`, `Mode`, `Pompa`, `Selisih`, dan `Ringkasan`. Angka kelembaban, ambang, dan selisih ditulis tanpa simbol `%`; nilai numerik yang tidak tersedia dibiarkan kosong. Berkas memakai UTF-8 dengan BOM untuk membantu pembacaan di Excel serta penanganan tanda kutip dan koma dalam data teks. Pencarian, penyaringan, dan pengunduhan **tidak mengubah riwayat di `localStorage`**.
+
 ## Pengujian dan Bukti
 
-Kriteria, hasil harapan, pelaksanaan, dan status pengujian manual didokumentasikan pada [`docs/04-kasus-uji.md`](docs/04-kasus-uji.md). Dokumen tersebut mempertahankan **58 kasus**: KT (10), VL (18), KM (9), DP (4), PS (9), dan UI (8). Bukti visual disimpan di [`docs/bukti/`](docs/bukti/) pada tiga folder pengujian.
+Kriteria, hasil harapan, pelaksanaan, dan status pengujian manual didokumentasikan pada [`docs/04-kasus-uji.md`](docs/04-kasus-uji.md). Dokumen tersebut mempertahankan **58 kasus awal**: KT (10), VL (18), KM (9), DP (4), PS (9), dan UI (8), serta menambahkan **16 skenario Change Request** (CR-01 sampai CR-16) sesuai analisis yang di-commit sebelum coding. Sepuluh tes otomatis Change Request pada `tes/change-request.test.mjs` memakai data uji tersendiri; status setiap skenario manual dan cakupan otomatis dibedakan pada dokumen kasus uji. Bukti visual versi pertama berada di [`docs/bukti/`](docs/bukti/) pada tiga folder pengujian.
 
 Untuk menjalankan seluruh tes otomatis dari folder proyek, buka terminal baru dan jalankan:
 
@@ -85,9 +101,9 @@ Untuk menjalankan seluruh tes otomatis dari folder proyek, buka terminal baru da
 node --test
 ```
 
-**Hasil pemeriksaan kode dalam ZIP pada 13 Oktober 2026:** **38 lulus, 0 gagal** menggunakan Node.js **v22.16.0**. Berkas pengujian ada di `tes/` (misalnya `logic.test.mjs`, `storage.test.mjs`, `alif-storage-smoke.test.mjs`, `dafa-smoke.test.mjs`, dan `tampilan.test.mjs`). Hasil regresi validasi pada `main` dilaporkan lulus oleh tim, tetapi jumlah tes pada `main` terbaru perlu diperiksa kembali setelah sinkronisasi Git.
+**Hasil pengujian lokal terbaru yang dikonfirmasi tim pada 13 Oktober 2026:** **61 tes lulus, 0 gagal** (51 tes sebelumnya dan 10 tes Change Request Alif). Pengujian baru ada pada `tes/change-request.test.mjs`; pengujian struktur tampilan lama di `tes/tampilan.test.mjs` telah disesuaikan agar memeriksa keberadaan fitur baru. Angka **38 lulus, 0 gagal** merujuk ke pemeriksaan arsip yang lebih lama menggunakan Node.js v22.16.0. Pengujian terbaru setelah seluruh penggabungan tetap dapat diulang melalui `node --test`.
 
-**Kualitas bukti:** screenshot PS-08 yang tersedia menunjukkan aktivasi simulasi kegagalan tulis di Console, belum memperlihatkan pesan aplikasi setelah tombol dijalankan. Unit test memeriksa penanganan `simpanKeadaan` saat media penyimpanan melempar error. UI-07 dan UI-08 dilaporkan lulus melalui pemeriksaan langsung tim tanpa screenshot khusus.
+**Kualitas bukti:** pada arsip lama yang diperiksa, screenshot PS-08 hanya menunjukkan aktivasi simulasi kegagalan tulis di Console. Pembimbing menyatakan pengujian lanjutan berhasil dan screenshot pengganti telah dibuat, tetapi file pengganti tidak termasuk dalam tiga dokumen yang diperbarui ini. Unit test memeriksa kegagalan tulis. UI-07 dan UI-08 dilaporkan lulus melalui pemeriksaan langsung tim tanpa screenshot khusus. Pengujian CSV dan pencarian terbaru didukung 10 tes otomatis dan laporan percobaan browser tim; tidak dinyatakan memiliki screenshot baru apabila belum disertakan.
 
 ## Struktur Repositori
 
@@ -95,18 +111,21 @@ node --test
 |---|---|
 | `README.md` | Pengenalan produk dan petunjuk menjalankan proyek |
 | `.gitignore` | Mengecualikan berkas rahasia dan hasil instalasi/build |
-| `docs/` | Spesifikasi, rencana, log prompt, kasus uji, review, refleksi, dan penjelasan kode |
+| `docs/` | Spesifikasi, rencana, log prompt, kasus uji, analisis Change Request, review, refleksi, dan penjelasan kode |
 | `docs/bukti/` | Tangkapan layar hasil pengujian |
 | `src/` | Kode website SOLARIS Challenge Vibe Engineering |
-| `tes/` | Unit test untuk fungsi dan aturan simulator |
+| `tes/` | Unit test fungsi simulator, struktur tampilan, dan 10 pengujian Change Request |
 | `server.mjs` | Server HTTP lokal untuk mengakses folder `src/` |
 | `src/js/logic.mjs` | Validasi, perhitungan selisih, *hysteresis*, dan pengendalian virtual |
 | `src/js/storage.mjs` | Membaca dan menyimpan data simulasi di `localStorage` |
 | `src/js/app.mjs` | Menghubungkan form simulator dengan logika dan penyimpanan |
+| `src/js/riwayat.mjs` | Menampilkan riwayat, menyaring pencarian/filter, dan menghasilkan CSV |
+| `tes/change-request.test.mjs` | Menguji perilaku pencarian, filter, kondisi kosong, dan isi CSV |
+| `docs/analisis-change-request.md` | Analisis dampak yang di-commit sebelum implementasi Change Request |
 | `src/index.html`, `src/simulator.html`, `src/riwayat.html` | Beranda, simulator, dan halaman riwayat |
-| `bughunt-kasir/` | Lokasi rencana pekerjaan Bug Hunt yang terpisah; folder belum ada pada salinan ZIP yang diperiksa |
+| `bughunt-kasir/` | Lokasi tugas Bug Hunt yang terpisah dari fitur SOLARIS; status pengerjaan dicatat pada commit Bug Hunt |
 
-Beberapa folder rencana tahap berikutnya (misalnya `bughunt-kasir/`) dapat belum ada. Daftar struktur di atas membedakan berkas yang tersedia dan lokasi yang direncanakan.
+Keberadaan folder Bug Hunt bergantung pada tahap pelaksanaan tugas terpisah dan tidak termasuk hasil pengujian 61 tes aplikasi SOLARIS.
 
 ## Ruang Lingkup dan Batasan
 
@@ -134,7 +153,3 @@ Logo SOLARIS dinyatakan sebagai aset identitas tim. Belum ada berkas `LICENSE` p
 | Zaskia Aulia Putri Sheprida | XI ELIN 2 | Antarmuka, dokumentasi, dan pemeriksaan tampilan |
 
 Pembagian tugas tidak membatasi kewajiban setiap anggota untuk memahami serta menjelaskan bagian kode yang berbeda.
-
-## Catatan Kolaborasi dan Penggunaan AI
-
-ChatGPT digunakan oleh siswa dan guru pembimbing untuk memahami instruksi, menghasilkan rancangan, meninjau pesan kesalahan, dan membantu perbaikan. Dafa, Alif, dan Zaskia menjalankan perubahan, menguji hasil, serta mendokumentasikan temuan sesuai pembagian tanggung jawab. Hasil AI tetap diperiksa; kekurangan pesan validasi pernah ditemukan dan diperbaiki melalui pengujian regresi. Detail proses dicatat pada `docs/03-log-prompt.md` dan akan dilengkapi pada dokumen review/kesalahan AI sesuai format panitia.

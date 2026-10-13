@@ -89,18 +89,45 @@ test('Z2: semua masukan angka memakai step 1', () => {
 
 test('Z3: halaman riwayat dan tabel disiapkan', () => {
   assert.ok(existsSync(lokasi(riwayat)), 'src/riwayat.html belum ada');
+
   const html = baca(riwayat);
+
   assert.match(html, /id="baris-riwayat"/);
-  for (const header of ['Waktu', 'Perangkat', 'Jenis', 'Kelembaban', 'Mode', 'Pompa', 'Selisih']) {
-    assert.ok(html.includes(`<th>${header}</th>`), `Kolom tidak ada: ${header}`);
+
+  for (const header of [
+    'Waktu',
+    'Perangkat',
+    'Jenis',
+    'Kelembaban',
+    'Mode',
+    'Pompa',
+    'Selisih'
+  ]) {
+    assert.ok(
+      html.includes(`<th>${header}</th>`),
+      `Kolom tidak ada: ${header}`
+    );
   }
+
   assert.match(html, /src="\.\/js\/riwayat\.mjs"/);
 });
 
-test('Z3: halaman riwayat belum berisi input pencarian atau tombol ekspor CSV', () => {
+test('Z3: halaman riwayat menyediakan pencarian, filter, dan CSV', () => {
   const html = baca(riwayat);
-  assert.doesNotMatch(html, /<input[^>]*type="search"/i);
-  assert.doesNotMatch(html, /<button[^>]*>\s*Unduh CSV/i);
+
+  assert.match(
+    html,
+    /<input\b[^>]*\btype="search"[^>]*\bid="cari-riwayat"/i
+  );
+
+  assert.match(html, /<select[^>]*id="filter-perangkat"/i);
+  assert.match(html, /<select[^>]*id="filter-pompa"/i);
+
+  assert.match(html, /<button[^>]*id="unduh-csv"/i);
+  assert.match(html, /Unduh CSV/i);
+
+  assert.match(html, /id="data-tidak-ditemukan"/i);
+  assert.match(html, /Data tidak ditemukan/);
 });
 
 test('Z2-Z3: desain simulator memiliki aturan responsif', () => {

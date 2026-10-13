@@ -41,3 +41,57 @@
 [hidden] { display: none !important; }
 @media (max-width: 850px) { .sim-layout { grid-template-columns: 1fr; } }
 @media (max-width: 540px) { .sim-container { padding-top: 34px; } .sim-panel { padding: 18px; } .sim-two-col { grid-template-columns: 1fr; gap: 0; } .sim-stats { gap: 8px; } .sim-stats > div { padding: 12px; } .sim-stats strong { font-size: 1.14rem; } }
+
+/* Change Request: pencarian dan filter halaman Riwayat */
+.riwayat-filter {
+  display: grid;
+  grid-template-columns: minmax(180px, 2fr)
+                         minmax(150px, 1fr)
+                         minmax(140px, 1fr)
+                         auto;
+  gap: 14px;
+  align-items: end;
+  padding: 18px;
+  margin: 18px 0 22px;
+  border: 1px solid #d5e7f2;
+  border-radius: 14px;
+  background: #f2f8fc;
+}
+
+.riwayat-filter-item {
+  min-width: 0;
+}
+
+.riwayat-filter-item label {
+  display: block;
+  margin: 0 0 8px;
+  font-weight: 700;
+  color: #183b5f;
+}
+
+.riwayat-filter-item input,
+.riwayat-filter-item select {
+  width: 100%;
+  min-height: 46px;
+}
+
+.riwayat-filter-aksi .btn {
+  min-height: 46px;
+  width: 100%;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .riwayat-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .riwayat-filter {
+    grid-template-columns: 1fr;
+    padding: 14px;
+    gap: 12px;
+  }
+}

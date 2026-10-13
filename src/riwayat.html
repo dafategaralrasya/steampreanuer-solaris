@@ -21,9 +21,46 @@
       <h1>Riwayat Smart Irrigation</h1>
       <p>Rekap pembacaan dan kontrol kedua kebun yang tersimpan pada browser ini. Bukan telemetry nyata.</p></div>
     <section class="sim-panel"><h2>Riwayat tersimpan</h2>
+<div class="riwayat-filter" aria-label="Pencarian dan filter riwayat">
+  <div class="riwayat-filter-item">
+    <label for="cari-riwayat">Cari Riwayat</label>
+    <input
+      type="search"
+      id="cari-riwayat"
+      placeholder="Cari perangkat, mode, atau keterangan"
+      autocomplete="off"
+    >
+  </div>
+
+  <div class="riwayat-filter-item">
+    <label for="filter-perangkat">Filter Perangkat</label>
+    <select id="filter-perangkat">
+      <option value="">Semua Perangkat</option>
+      <option value="depan">Kebun Depan</option>
+      <option value="belakang">Kebun Belakang</option>
+    </select>
+  </div>
+
+  <div class="riwayat-filter-item">
+    <label for="filter-pompa">Filter Status Pompa</label>
+    <select id="filter-pompa">
+      <option value="">Semua Status</option>
+      <option value="ON">ON</option>
+      <option value="OFF">OFF</option>
+    </select>
+  </div>
+
+  <div class="riwayat-filter-item riwayat-filter-aksi">
+    <button type="button" id="unduh-csv" class="btn btn-primary">
+      Unduh CSV
+    </button>
+  </div>
+</div>
+
       <p id="jumlah-riwayat" aria-live="polite">Memuat data...</p>
       <p id="riwayat-error" class="sim-message" data-status="salah" role="alert" hidden></p>
       <p id="riwayat-kosong" class="sim-hint" hidden>Belum ada riwayat. Jalankan simulasi pertama untuk membuat catatan.</p>
+      <p id="data-tidak-ditemukan" class="sim-hint" aria-live="polite" hidden>Data tidak ditemukan</p>
       <div class="sim-table-wrap"><table class="sim-table">
         <caption>Catatan peristiwa dari Kebun Depan dan Kebun Belakang</caption>
         <thead><tr><th>Waktu</th><th>Perangkat</th><th>Jenis</th><th>Kelembaban</th><th>Bawah / Atas</th><th>Mode</th><th>Pompa</th><th>Selisih</th><th>Keterangan</th></tr></thead>

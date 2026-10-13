@@ -33,7 +33,7 @@ Temuan tersebut menjadi alasan memilih simulasi Smart Irrigation: pengunjung dap
 4. Menampilkan keputusan pompa otomatis berdasarkan *hysteresis*, serta simulasi kendali manual.
 5. Menghasilkan nilai numerik yang dapat dihitung dan diuji secara objektif.
 6. Menyimpan hasil simulasi dan menampilkannya kembali dalam riwayat setelah halaman dimuat ulang.
-7. Menyediakan dasar halaman rekap yang dapat dikembangkan melalui Change Request sesuai urutan challenge.
+7. Menyediakan halaman Riwayat yang kemudian dilengkapi pencarian, filter gabungan, dan unduhan CSV pada tahap Change Request setelah Checkpoint 2.
 
 Website ini dimaksudkan sebagai prototipe edukasi dan demonstrasi konsep, **bukan sistem pengendali penyiraman riil yang telah tervalidasi untuk penggunaan tanpa pengawasan**.
 
@@ -144,7 +144,13 @@ Halaman Riwayat memperlihatkan data tersimpan pada kedua perangkat. Untuk pembac
 
 Riwayat dapat dilihat kembali setelah *refresh* dan tetap memisahkan identitas perangkat dengan benar. Ketika belum ada data, halaman menampilkan pesan keadaan kosong yang jelas.
 
-Halaman Riwayat sengaja disiapkan untuk menerima **Change Request**. Fitur pencarian langsung, filter, keadaan tanpa hasil dengan pesan **“Data tidak ditemukan”**, dan unduhan CSV dari data yang sedang tampil **baru dikerjakan setelah Checkpoint 2 dan setelah analisis perubahan di-commit**, bukan pada versi pertama.
+**Change Request setelah Checkpoint 2:** halaman Riwayat telah dilengkapi pencarian langsung yang tidak membedakan huruf besar dan kecil pada nama perangkat, jenis peristiwa, mode, status pompa, dan keterangan. Dua filter yang tersedia adalah **perangkat** (Semua Perangkat, Kebun Depan, Kebun Belakang) dan **status pompa** (Semua Status, ON, OFF). Pencarian dan kedua filter diterapkan bersamaan tanpa mengubah data tersimpan.
+
+Ketika ada riwayat tetapi tidak satu pun baris cocok, halaman menampilkan pesan tepat **“Data tidak ditemukan”**. Ketika riwayat benar-benar belum ada, halaman tetap menampilkan pesan belum ada riwayat. Jumlah hasil yang ditampilkan ikut berubah sesuai penyaringan.
+
+Tombol **Unduh CSV** menghasilkan file `riwayat-solaris.csv` dari **baris yang sedang tampil** dan mempertahankan urutan baris tersebut. CSV memiliki judul kolom `Waktu`, `Perangkat`, `Jenis`, `Kelembaban`, `Batas Bawah`, `Batas Atas`, `Mode`, `Pompa`, `Selisih`, dan `Ringkasan`. Kolom angka menggunakan nilai mentah tanpa simbol `%`, nilai tidak tersedia dikosongkan, teks mengandung koma/tanda kutip ditangani sesuai format CSV, dan file menggunakan UTF-8 dengan BOM. Apabila hasil filter kosong, CSV hanya berisi baris judul kolom. Fitur ini tidak menambah, menghapus, maupun menulis ulang data simulasi.
+
+Tahap tersebut dilakukan setelah Checkpoint 2 (`c686555`) dan analisis dampak pada `docs/analisis-change-request.md` di-commit (`e104f41`) sebelum kode fitur diubah. Perhitungan hysteresis, validasi input, pemisahan dua kebun, dan penyimpanan `localStorage` tetap mengikuti spesifikasi semula.
 
 ### F09 — Tampilan dan pengalaman pengguna
 
@@ -180,7 +186,11 @@ Alur ini mencakup formulir dengan validasi, aturan numerik yang bisa diuji, peny
 | B13 | Jika `localStorage` gagal, tampil pesan yang jelas; aplikasi tidak mengklaim penyimpanan berhasil. |
 | B14 | Riwayat menampilkan kembali data tersimpan dan membedakan peristiwa pembacaan dengan kontrol manual. |
 | B15 | Data simulator tidak boleh diklaim berasal dari ESP32, sensor nyata, API, atau pompa fisik. |
-| B16 | Pencarian, filter, dan ekspor CSV baru diterapkan setelah Checkpoint 2 serta commit analisis Change Request. |
+| B16 | Pencarian, filter, dan ekspor CSV diterapkan **setelah** Checkpoint 2 dan commit analisis Change Request, bukan pada versi pertama. |
+| B17 | Pencarian langsung mengabaikan perbedaan huruf besar-kecil dan dapat digabung dengan filter perangkat serta status pompa. |
+| B18 | Hasil tanpa kecocokan menggunakan teks “Data tidak ditemukan”, berbeda dari kondisi belum ada riwayat. |
+| B19 | CSV memuat hanya hasil penyaringan yang tampil, dalam urutan sama, dengan baris judul kolom serta nilai angka mentah; hasil kosong berisi judul saja. |
+| B20 | Pencarian, filter, dan ekspor tidak mengubah data yang disimpan pada `localStorage`. |
 
 ## 7. Hal yang tidak termasuk versi prototipe challenge
 
@@ -192,7 +202,7 @@ Alur ini mencakup formulir dengan validasi, aturan numerik yang bisa diuji, peny
 - Optimasi ilmiah dosis air per tanaman heterogen, kalibrasi sensor, pengukuran akurasi pertumbuhan tanaman, dan rekomendasi agronomi otomatis.
 - Modul PWA yang dapat diinstal, integrasi REST API, dan ekosistem IoT lain dari platform SOLARIS penuh.
 - Penghapusan massal riwayat atau manajemen pengguna berlapis pada versi pertama.
-- Pencarian, filter, dan CSV sebelum tahapan Change Request yang diwajibkan panitia.
+- Penerapan pencarian, filter, dan CSV **sebelum** Checkpoint 2 dan analisis dampak; ketiganya telah dikerjakan pada tahap Change Request sesudahnya.
 
 Fitur-fitur platform SOLARIS yang lebih luas tetap dapat diperkenalkan sebagai **visi atau rencana produk asli**, bukan sebagai klaim keberhasilan simulator challenge.
 
@@ -217,8 +227,13 @@ Suatu kriteria dinyatakan terpenuhi apabila dapat diverifikasi melalui aplikasi 
 | S13 | Semua halaman utama dapat digunakan di layar HP maupun desktop tanpa hambatan navigasi mendasar. |
 | S14 | README menyediakan langkah menjalankan website dan tes yang dapat diikuti dari hasil *clone* repositori. |
 | S15 | Kasus uji manual serta unit test menghasilkan bukti yang sesuai dengan perilaku yang sebenarnya, bukan hasil yang diasumsikan. |
+| S16 | Ketikan pencarian langsung menyaring riwayat tanpa membedakan huruf besar-kecil. |
+| S17 | Filter perangkat dan status pompa dapat dipadukan dengan pencarian; jumlah dan baris sesuai pilihan. |
+| S18 | Pesan “Data tidak ditemukan” muncul ketika hasil penyaringan kosong; kondisi awal tanpa riwayat tetap dibedakan. |
+| S19 | Unduhan CSV berisi header dan hanya hasil yang ditampilkan, mengikuti urutan tabel, dengan angka tanpa tanda `%` dan nilai kosong tetap kosong. |
+| S20 | Fitur Change Request tidak mengubah data riwayat tersimpan; tes regresi lama dan baru tetap lulus. |
 
-Kasus pengujian beserta nilai harapan yang dihitung dan diperiksa anggota tim dicatat pada `docs/04-kasus-uji.md`. Hasil aktual dan bukti tangkapan layar ditambahkan setelah implementasi dijalankan. Persyaratan dokumentasi dan commit mengikuti lembar Challenge Vibe Engineering.
+Kasus pengujian beserta nilai harapan yang dihitung dan diperiksa anggota tim dicatat pada `docs/04-kasus-uji.md`. Hasil aktual dan jenis bukti dibedakan antara pemeriksaan browser, pengujian otomatis, dan screenshot. Analisis yang ditulis sebelum implementasi dipertahankan pada `docs/analisis-change-request.md`, sedangkan pengujian regresi terakhir yang dikonfirmasi tim berjumlah 61 lulus dan 0 gagal pada 13 Oktober 2026.
 
 ## 9. Nilai STEAM, bisnis, dan keterbatasan
 
@@ -251,4 +266,4 @@ Secara bisnis, website membantu calon pengguna dan calon pembeli memahami manfaa
 
 ---
 
-**Status dokumen:** Spesifikasi yang ditetapkan sebagai dasar perancangan prototipe challenge. Pelaksanaan fitur, hasil pengujian, dan perubahan berikutnya dibuktikan melalui berkas kode, kasus uji, log proses, dan riwayat commit repositori.
+**Status dokumen — 13 Oktober 2026:** Spesifikasi awal tetap dipertahankan sebagai acuan prototipe; rincian fitur hasil Change Request ditambahkan setelah Checkpoint 2 sesuai riwayat commit. Tim mengonfirmasi pengujian lokal 61 tes lulus dan 0 gagal. Bukti pemeriksaan dan status tiap kasus tersedia pada dokumen kasus uji; hasil tersebut tidak menggantikan kebutuhan pemeriksaan ulang sesudah perubahan berikutnya.

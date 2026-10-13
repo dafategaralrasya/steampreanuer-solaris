@@ -6,7 +6,7 @@
 **Dasar pengujian:** `docs/01-spesifikasi.md`, proposal SOLARIS STEAMpreneur 2026, dan Lembar Challenge Vibe Engineering  
 **Tanggal penetapan hasil harapan:** 11 Oktober 2026  
 **Perangkat virtual:** Device 01 — Kebun Depan; Device 02 — Kebun Belakang  
-**Status dokumen:** Bagian hasil harapan disusun sebelum implementasi; hasil aktual, status, dan bukti diperbarui menggunakan laporan siswa dan arsip `steampreneur-solaris.zip` yang diberikan pada 13 Oktober 2026. Kasus tanpa bukti yang memadai dibedakan dari kasus yang lulus berdasarkan laporan tim.
+**Status dokumen — 13 Oktober 2026:** Hasil harapan awal dipertahankan, 58 kasus awal tetap utuh, dan 16 skenario Change Request ditambahkan berdasarkan analisis yang di-commit sebelum coding. Hasil aktual dibedakan antara pengujian browser, tes otomatis, dan keterangan siswa; tidak semua 16 skenario menggunakan kondisi data yang sama dengan tes otomatis Alif.
 
 ## 1. Tujuan dan cakupan
 
@@ -19,7 +19,7 @@ Kasus uji ditetapkan berdasarkan spesifikasi yang disepakati tim. Hasil yang dih
 **Bagian A** mencakup kriteria, input, dan hasil harapan yang ditetapkan sebelum coding. **Bagian B** mencakup hasil sebenarnya, kelulusan, dan bukti setelah aplikasi dijalankan; kedua bagian dipertahankan dalam tabel resmi yang sama.
 
 
-**Batas bukti:** “Lulus menurut laporan tim” mengacu kepada keterangan pelaksana/pembimbing, bukan berarti tersedia rekaman lengkap seluruh tahap pengujian. Khusus PS-08, **gambar dalam ZIP yang diperiksa** hanya menampilkan penyiapan kegagalan `localStorage`, sedangkan hasil setelah penyimpanan dicoba **dikonfirmasi lulus oleh pembimbing**; pembimbing menyatakan screenshot pengganti telah dibuat pada laptop tim dan perlu dicocokkan sebelum push. Bukti tes otomatis tetap dilaporkan secara terpisah.
+**Batas bukti:** “Lulus menurut laporan tim” mengacu kepada keterangan pelaksana/pembimbing, bukan berarti tersedia rekaman lengkap seluruh tahap pengujian. Khusus PS-08, **gambar dalam ZIP yang diperiksa** hanya menampilkan penyiapan kegagalan `localStorage`, sedangkan hasil setelah penyimpanan dicoba **dikonfirmasi lulus oleh pembimbing**; pembimbing menyatakan screenshot pengganti telah dibuat pada laptop tim. Berkas pengganti tidak termasuk dalam arsip terdahulu yang menjadi acuan pencatatan bukti ini. Bukti tes otomatis tetap dilaporkan secara terpisah.
 
 Website challenge menggunakan data **simulasi**. Tidak ada pembacaan sensor, kendali ESP32, pompa fisik, atau sinkronisasi lintas perangkat.
 
@@ -42,7 +42,11 @@ Website challenge menggunakan data **simulasi**. Tidak ada pembacaan sensor, ken
 | B13 | Saat `localStorage` gagal, antarmuka menampilkan kegagalan dan tidak menyatakan data berhasil disimpan. |
 | B14 | Halaman Riwayat menampilkan kembali data kedua perangkat serta membedakan jenis peristiwa. |
 | B15 | Semua keluaran berlabel simulasi; tidak diklaim berasal dari sensor atau pompa nyata. |
-| B16 | Pencarian, filter, dan unduhan CSV **belum** diterapkan sebelum Checkpoint 2 dan commit analisis Change Request. |
+| B16 | Pencarian, filter, dan unduhan CSV diterapkan setelah Checkpoint 2 dan commit analisis Change Request, bukan pada versi pertama. |
+| B17 | Pencarian langsung, tanpa membedakan huruf besar/kecil, dapat digabung dengan filter perangkat dan status pompa. |
+| B18 | Tidak ada hasil cocok menampilkan “Data tidak ditemukan”; data riwayat yang sejak awal kosong memiliki pesan tersendiri. |
+| B19 | CSV hanya memuat baris yang tampil, memakai header, angka mentah, dan nilai kosong tanpa angka rekaan. |
+| B20 | Penyaringan dan ekspor tidak menulis ulang data riwayat di `localStorage`. |
 
 **Aturan batas:** nilai tepat pada threshold **bawah** masuk daerah mempertahankan status; nilai tepat pada threshold **atas** mematikan pompa. Contoh: dengan batas 30%/70%, angka 30% tidak otomatis mengaktifkan pompa yang sebelumnya OFF.
 
@@ -127,7 +131,7 @@ Semua nilai pada kolom hasil harapan berikut telah dihitung oleh siswa dan dikon
 | **PS-05** | Penyimpanan dan riwayat | Jalankan input salah setelah ada satu entri yang valid. | Muncul pesan kesalahan; jumlah riwayat, pengaturan, status, dan pembacaan terakhir tidak berubah. | Pengujian input salah setelah riwayat ada dilaporkan tidak mengubah data. | Lulus (laporan siswa dan screenshot) | `bukti/Uji Validasi Input Formulir dan Pemeriksaan fungsi localstorage beserta rekap/Tes input salah saat data lama sudah ada.png` |
 | **PS-06** | Penyimpanan dan riwayat | Masuk ke halaman Riwayat saat belum ada peristiwa tersimpan. | Ada pesan keadaan kosong yang jelas; tidak menampilkan riwayat contoh seolah-olah nyata. | Keadaan tanpa riwayat diperiksa melalui profil browser kosong; halaman menampilkan keterangan belum ada riwayat. | Lulus berdasarkan laporan tim dan screenshot keadaan kosong | `bukti/Uji Validasi Input Formulir dan Pemeriksaan fungsi localstorage beserta rekap/PS-09.png` |
 | **PS-07** | Penyimpanan dan riwayat | Periksa riwayat setelah pembacaan, pergantian mode, dan perintah Manual yang berhasil. | Jenis peristiwa dapat dibedakan; perintah kontrol tidak menambah entri pembacaan kelembaban palsu. | Riwayat pembacaan dan peristiwa perubahan kontrol diperiksa berdasarkan hasil pengujian tim; jenis peristiwa dapat dibedakan. | Lulus berdasarkan laporan tim; dokumentasi parsial | `bukti/Uji Validasi Input Formulir dan Pemeriksaan fungsi localstorage beserta rekap/DP-03.png` |
-| **PS-08** | Penyimpanan dan riwayat | Simulasikan kondisi akses/tulis `localStorage` ditolak pada lingkungan pengujian, kemudian lakukan tindakan penyimpanan. | Pesan kegagalan penyimpanan terlihat; aplikasi tidak mengklaim berhasil menyimpan dan tidak menampilkan hasil gagal sebagai data tersimpan. | Penguji mengaktifkan simulasi kegagalan tulis `localStorage`; menurut konfirmasi langsung guru pembimbing, ketika simulasi dijalankan muncul pesan gagal menyimpan, tidak muncul klaim berhasil, dan entri pembacaan yang gagal tidak bertambah di Riwayat. Screenshot PS-08 pada ZIP yang diperiksa masih menunjukkan langkah aktivasi kegagalan; tim menyatakan sudah menggantinya pada laptop setelah ZIP dikirim. Unit test untuk error tulis juga lulus. | Lulus berdasarkan konfirmasi pengujian tim; periksa ulang screenshot pengganti sebelum push | `bukti/Uji Validasi Input Formulir dan Pemeriksaan fungsi localstorage beserta rekap/PS-08.png` (tim melaporkan telah mengganti screenshot; versi pengganti belum tersedia dalam ZIP yang diperiksa); `tes/storage.test.mjs` |
+| **PS-08** | Penyimpanan dan riwayat | Simulasikan kondisi akses/tulis `localStorage` ditolak pada lingkungan pengujian, kemudian lakukan tindakan penyimpanan. | Pesan kegagalan penyimpanan terlihat; aplikasi tidak mengklaim berhasil menyimpan dan tidak menampilkan hasil gagal sebagai data tersimpan. | Penguji mengaktifkan simulasi kegagalan tulis `localStorage`; menurut konfirmasi langsung guru pembimbing, ketika simulasi dijalankan muncul pesan gagal menyimpan, tidak muncul klaim berhasil, dan entri pembacaan yang gagal tidak bertambah di Riwayat. Screenshot PS-08 pada ZIP yang diperiksa masih menunjukkan langkah aktivasi kegagalan; tim menyatakan sudah menggantinya pada laptop setelah ZIP dikirim. Unit test untuk error tulis juga lulus. | Lulus berdasarkan konfirmasi pengujian tim; bukti visual pada arsip terdahulu bersifat parsial | `bukti/Uji Validasi Input Formulir dan Pemeriksaan fungsi localstorage beserta rekap/PS-08.png` (tim melaporkan telah mengganti screenshot; versi pengganti belum tersedia dalam ZIP yang diperiksa); `tes/storage.test.mjs` |
 | **PS-09** | Penyimpanan dan riwayat | Gunakan browser atau profil yang berbeda dari tempat simulasi awal dilakukan. | Data tidak otomatis tersinkron; batasan ini dijelaskan secara jujur. | Pada profil browser berbeda, halaman Riwayat memperlihatkan keadaan kosong dan tidak menerima data otomatis dari profil pertama. | Lulus berdasarkan laporan tim dan screenshot | `bukti/Uji Validasi Input Formulir dan Pemeriksaan fungsi localstorage beserta rekap/PS-09.png` |
 
 ## 7. Pengujian alur utama, tampilan, dan keamanan
@@ -153,16 +157,16 @@ Semua nilai pada kolom hasil harapan berikut telah dihitung oleh siswa dan dikon
 | Pemisahan dua perangkat (`DP`) | 4 | **4 dilaporkan lulus**; screenshot DP-01, DP-03 dan dua screenshot pengujian dua kebun/riwayat tersedia. |
 | Penyimpanan dan riwayat (`PS`) | 9 | **9 kasus dilaporkan lulus**. Untuk PS-08, screenshot membuktikan aktivasi simulasi kegagalan tulis, sedangkan keluaran setelah tombol dijalankan dan tidak bertambahnya riwayat **dikonfirmasi langsung oleh pembimbing**. Screenshot pengganti sudah dilaporkan ditambahkan di laptop tim tetapi belum ada dalam ZIP audit ini. |
 | Alur, tampilan, keamanan (`UI`) | 8 | **8 dilaporkan lulus**. UI-01–UI-06 didukung screenshot pada folder navigasi/responsif dan laporan pengujian; UI-07 dan UI-08 dilaksanakan tanpa screenshot khusus. |
-| **Total** | **58** | **58 skenario tetap utuh dan semuanya dilaporkan telah dilaksanakan.** Kelulusan 58 kasus berasal dari laporan tim; tidak semua hasil didokumentasikan secara visual pada tiap langkah. Kekuatan bukti dibedakan per kasus, khususnya PS-08 serta VL-01/VL-03. |
+| **Total** | **58** | **58 skenario tetap utuh dan semuanya dilaporkan telah dilaksanakan.** Kelulusan 58 kasus berasal dari laporan tim; tidak semua hasil didokumentasikan secara visual pada tiap langkah. Kekuatan bukti dibedakan per kasus, khususnya PS-08 serta VL-01/VL-03.
 
 **Cara membaca status:** “Lulus berdasarkan laporan tim” menyatakan hasil yang dilaporkan pelaksana; bukan klaim bahwa setiap langkah dapat dibuktikan hanya dengan satu screenshot. “Perlu verifikasi” berarti bukti yang tersedia belum cukup untuk memastikan seluruh kriteria pada kasus tertentu. Pada UI-07 dan UI-08, pengujian dilaporkan lulus tanpa screenshot sesuai keterangan tim.
 
 **Catatan mengenai UI:** dokumentasi pendukung UI-01–UI-06 tersimpan dalam folder `docs/bukti/Uji Navigasi dan Uji Pemeriksaan Tampilan HP dan Dekstop/`. UI-07 dan UI-08 diuji melalui pemeriksaan langsung tanpa screenshot. Status tersebut dicatat apa adanya sebagai hasil pengujian manual tim.
 
-## Unit test otomatis 
+## Unit test otomatis
 
-**Nama file test:** file-file `.test.mjs` pada folder `tes/` sesuai hasil `git ls-files tes`.  
-**Jumlah pengujian otomatis yang dijalankan terhadap kode di ZIP:** 38 lulus dari 38, 0 gagal (Node.js v22.16.0, pemeriksaan 13 Oktober 2026). Tim secara terpisah mengonfirmasi regresi validasi pascaperbaikan juga lulus di `main` terbaru; hasil dari ZIP dan `main` tidak disamakan.
+**Nama file test:** file-file `.test.mjs` pada folder `tes/`, termasuk `tes/change-request.test.mjs` dan `tes/tampilan.test.mjs`.
+**Hasil pengujian lokal terakhir yang dikonfirmasi tim pada 13 Oktober 2026:** 61 tes lulus dari 61, 0 gagal, setelah 10 pengujian otomatis Change Request ditambahkan dan satu pengujian Z3 pra-Change Request diperbarui. Pengujian pada ZIP lama tercatat 38 dari 38 lulus dengan Node.js v22.16.0; kedua hasil berasal dari tahap yang berbeda.
 
 ### Cakupan pengujian otomatis
 
@@ -174,26 +178,58 @@ File tes yang tersedia memeriksa logika berikut melalui **Node.js `node --test`*
 - Rangkaian hysteresis dengan status otomatis sebelumnya ON dan OFF.
 - Perpindahan Manual ke Otomatis, termasuk pembacaan terakhir yang kosong.
 - Pemisahan state dua perangkat dan pembuatan entri riwayat.
+- Pencarian langsung tanpa peka huruf besar/kecil, filter perangkat, filter status pompa, dan gabungan ketiganya.
+- Penanganan riwayat kosong serta hasil penyaringan tanpa kecocokan.
+- CSV hasil filter: header, isi, jumlah baris, angka tanpa simbol persen, dan nilai yang tidak tersedia.
 
-**Hasil tes pada kode yang diperiksa:** perintah `node --test` telah dijalankan pada salinan ZIP menggunakan Node.js **v22.16.0** dan menghasilkan **38 lulus, 0 gagal**. Tim mengonfirmasi bahwa PR perbaikan validasi Dafa dan regresi Alif telah digabung ke `main` serta diuji ulang dengan hasil lulus. Karena ZIP memuat referensi Git `main` yang lebih lama, jumlah tes terbaru di GitHub tidak diklaim sama dengan jumlah pada arsip ini; tim harus memeriksa kembali di `main` saat integrasi dokumentasi.
+**Perbedaan pemeriksaan:** hasil **38 lulus, 0 gagal** berasal dari pemeriksaan salinan ZIP lama menggunakan Node.js v22.16.0. Sesudah integrasi tes struktur Zaskia dan tes regresi Alif, tim mencatat **51 tes**; sesudah Change Request dan 10 tes Alif ditambahkan, tim menjalankan `node --test` pada komputer Alif dan mengonfirmasi **61 lulus, 0 gagal**. Tes Change Request menggunakan lingkungan DOM simulasi dan data buatan yang tetap, bukan rekaman interaksi otomatis dari Chrome.
 
 ### Bukti pengujian
 
 Sebanyak **56 berkas screenshot PNG** tersedia dalam tiga subfolder `docs/bukti/` pada arsip terbaru. Kolom Bukti menggunakan nama file sebenarnya dari arsip tim; sebagian kasus hanya didukung bukti pengujian terkait, bukan bukti lengkap seluruh prasyarat. Bukti gambar yang diambil **sebelum** perbaikan pesan tidak secara otomatis membuktikan regresi pascamerge. Kesimpulan regresi tersebut dicatat berdasarkan konfirmasi tim, bukan disimpulkan dari screenshot lama.
 
-## 9. Batas tahap dan tindak lanjut
+## 9. Kasus uji Change Request — CR-01 sampai CR-16
 
-Dokumen ini dibuat sebagai dasar hasil harapan **sebelum pembangunan website SOLARIS**, lalu dilengkapi bertahap setelah pengujian browser dan unit test. Pencarian langsung, filter, dan unduh CSV **tidak termasuk** kasus implementasi sebelum Checkpoint 2. Sesudah Checkpoint 2, tim mencatat analisis dampak pada `docs/analisis-change-request.md` dan melakukan commit **sebelum** perubahan kode. Kasus uji baru untuk pencarian, filter gabungan, pesan **“Data tidak ditemukan”**, CSV sesuai data yang tampil, dan pengujian regresi ditambahkan pada tahap tersebut.
+Kasus CR-01 sampai CR-16 berikut merujuk ke skenario dan hasil harapan yang **telah ditetapkan sebelum implementasi** pada `docs/analisis-change-request.md` (commit `e104f41`). Penambahan ini tidak mengubah 58 kasus awal. Sebagai dasar perhitungan skenario, digunakan tiga entri pembacaan: Kebun Depan 25% (30/70, **ON**, selisih **45**); Kebun Belakang 75% (30/70, **OFF**, selisih **0**); dan Kebun Depan 80% (30/70, **OFF**, selisih **0**). Angka tersebut merupakan **hasil harapan untuk data skenario**, bukan klaim bahwa semua tiga entri itu telah dimasukkan pada pengujian browser terakhir.
+
+Sepuluh tes pada `tes/change-request.test.mjs` memakai **empat entri uji berbeda**, termasuk dua pembacaan dan dua peristiwa kontrol. Nama tes otomatis CR-01 sampai CR-10 adalah penomoran di file pengujian Alif, **bukan** nomor skenario CR-01 sampai CR-16 dalam analisis. Kolom bukti di bawah membedakan kemampuan yang telah teruji dari rincian dataset yang belum diuji secara identik.
+
+| ID | Langkah / input yang ditetapkan | Hasil yang diharapkan | Hasil aktual / cakupan bukti | Status berdasarkan bukti yang tersedia |
+|---|---|---|---|---|
+| **CR-01** | Buka Riwayat dengan tiga entri acuan; semua filter kosong. | Tampil 3 baris, urutan sesuai riwayat. | Tes Alif memastikan seluruh **4** entri dataset otomatis tampil tanpa filter. | Fungsi dasar lulus otomatis; kondisi tepat 3 entri tidak diuji tersendiri. |
+| **CR-02** | Ketik `kebun depan`. | Langsung tampil 2 entri Kebun Depan tanpa *reload*. | Tes input pencarian Alif menghasilkan dua entri Kebun Depan dari empat data uji; tim juga mencoba pencarian di browser. | Lulus untuk perilaku pencarian. |
+| **CR-03** | Ubah pencarian menjadi `KeBuN DePaN`. | Tetap 2 entri tanpa peka huruf besar/kecil. | Tes Alif menggunakan `kEbUn dEpAn` dan memperoleh dua entri. | Lulus otomatis, variasi kapitalisasi setara. |
+| **CR-04** | Hapus kata pencarian setelah penyaringan. | Ketiga baris acuan muncul kembali dan tidak hilang. | Tes awal memperlihatkan semua data dan tes lain memperlihatkan penyaringan; alur menghapus kata secara berurutan tidak diuji tersendiri. | Belum diverifikasi sebagai satu rangkaian khusus. |
+| **CR-05** | Filter perangkat Kebun Belakang saja. | Satu entri Belakang pada dataset acuan. | Tes Alif membuktikan filter hanya menyisakan dua entri Belakang dari dataset empat entri. | Fungsi filter lulus otomatis; jumlah dataset berbeda. |
+| **CR-06** | Filter status pompa ON saja. | Satu pembacaan Depan 25%, ON. | Tes Alif menunjukkan dua entri ON pada dataset empat entri; tim mencoba filter ON di browser. | Fungsi filter ON lulus; kondisi satu entri acuan tidak diuji identik. |
+| **CR-07** | Filter status pompa OFF saja. | Dua entri OFF, Belakang 75% dan Depan 80%. | Logika filter OFF tersedia, tetapi kasus OFF tersendiri dengan dua data acuan tidak termasuk hasil tes khusus yang diberikan. | Belum diverifikasi tersendiri dengan dataset acuan. |
+| **CR-08** | Cari `kebun depan`, pilih Depan, lalu OFF. | Tepat satu entri Depan 80% OFF. | Tes Alif membuktikan **kombinasi tiga syarat** menggunakan pencarian `PEMBACAAN`, Depan, dan ON dengan satu hasil. | Fungsi gabungan lulus otomatis; kombinasi dan nilai yang diuji berbeda dari skenario acuan. |
+| **CR-09** | Cari `kebun belakang`, filter ON pada data acuan. | Nol hasil; teks tepat “Data tidak ditemukan”. | Tes Alif menggunakan kata tanpa kecocokan dan memeriksa kondisi tidak ada baris dan tampilnya pesan. | Fungsi pesan lulus; kombinasi pemicu khusus tidak diuji identik. |
+| **CR-10** | Buka Riwayat ketika sejak awal tidak ada catatan. | Pesan belum ada riwayat; bukan pesan tidak ditemukan. | Tes Alif menjalankan riwayat kosong dan memverifikasi kedua pesan dibedakan. | Lulus otomatis. |
+| **CR-11** | Unduh CSV pada hasil CR-08. | Satu baris header dan satu baris Depan 80% OFF. | Tes Alif mengekspor hasil gabungan Depan 20% ON dan memeriksa satu header serta tepat satu baris data. | Ekspor hasil gabungan lulus; isi contoh berbeda. |
+| **CR-12** | Unduh CSV semua tiga entri acuan. | Header dan tiga baris data, dalam urutan tabel. | Tes Alif menguji unduhan semua **4** entri dataset; empat baris data terbentuk. | Jumlah sesuai hasil otomatis; kasus tiga entri dan pembandingan urutan pada dataset acuan belum diuji terpisah. |
+| **CR-13** | Periksa angka Depan 80% OFF pada CSV. | `80`, `30`, `70`, `0` tanpa `%`. | Tes Alif memverifikasi nilai mentah `20`, `30`, `70`, `50` dan tidak ada tanda `%`. | Format numerik lulus otomatis; nilai contoh berbeda. |
+| **CR-14** | Ekspor kontrol tanpa pembacaan serta teks yang mengandung koma/tanda kutip. | Nilai tidak tersedia kosong; pengutipan CSV valid. | Tes Alif memeriksa nilai kosong pada peristiwa kontrol. Kasus tanda koma dan tanda kutip khusus tidak termasuk tes yang disampaikan. | Sebagian lulus; *escaping* khusus belum diuji tersendiri. |
+| **CR-15** | Gunakan filter/CSV, *refresh*, bandingkan isi riwayat asli. | Penyaringan/ekspor tidak mengubah jumlah atau isi data tersimpan. | Tes penyimpanan dan *refresh* versi awal tetap lulus pada rangkaian 61 tes; kode filter membaca daftar yang telah dimuat. Tidak ada hasil pembandingan sebelum-sesudah filter yang dicatat secara khusus. | Regresi penyimpanan lulus; rangkaian khusus belum diuji tersendiri. |
+| **CR-16** | Jalankan tes lama dan baru; periksa tampilan HP/desktop. | Seluruh tes relevan lulus, kontrol mudah digunakan. | Alif mengonfirmasi `node --test` **61 lulus, 0 gagal**; tampilan filter telah dibuka dan dinyatakan muncul sesuai oleh tim. Tes Z3 lama diperbarui. | Lulus otomatis dan laporan pemeriksaan tampilan; tanpa screenshot Change Request khusus yang dilampirkan di sini. |
+
+**Uji unduhan ketika hasil filter kosong:** tes otomatis Alif memeriksa bahwa file CSV berisi **header saja** ketika pencarian tidak cocok. Tim juga mengonfirmasi tombol CSV dapat diunduh melalui browser. Hasil terperinci untuk seluruh variasi unduhan browser tidak diklaim di luar yang sudah diuji.
+
+**Catatan hasil:** Status “fungsi lulus dengan data berbeda” bermakna perilaku pokok teruji menggunakan data tertentu, tetapi bukan bukti bahwa angka input dan urutan langkah dari skenario acuan sudah dicoba satu per satu. Status yang belum diuji tersendiri dicatat terbuka tanpa menyebutnya lulus. Bukti otomatis: `tes/change-request.test.mjs`; bukti pelaksanaan browser: laporan tim pada sesi Change Request 13 Oktober 2026.
+
+## 10. Batas tahap dan tindak lanjut
+
+Dokumen ini dibuat sebagai dasar hasil harapan **sebelum pembangunan website SOLARIS**, lalu dilengkapi bertahap setelah pengujian browser dan unit test. Pencarian langsung, filter, dan unduh CSV **tidak termasuk** kasus implementasi sebelum Checkpoint 2. Sesudah Checkpoint 2, tim mencatat analisis dampak pada `docs/analisis-change-request.md` dan melakukan commit **sebelum** perubahan kode. Kasus uji baru untuk pencarian, filter gabungan, pesan **“Data tidak ditemukan”**, CSV sesuai data yang tampil, dan regresi ditambahkan pada tahap Change Request serta dicatat pada bagian 9 dokumen ini.
 
 Bug Hunt atas `bughunt-kasir.zip` memiliki aturan dan batas waktu terpisah, sehingga pengujiannya tidak dicampur dengan hasil simulasi SOLARIS.
 
 **Penetapan hasil harapan:** perhitungan KT-01–KT-10 dinyatakan oleh siswa sebagai `ON 45`, `ON 40`, `ON 20`, `OFF 0`, `OFF 20`, `OFF 0`, `OFF 100`, `ON 100`, `ON 45`, dan `OFF 20` secara berurutan. Hasil ini digunakan apa adanya setelah dicocokkan dengan spesifikasi hysteresis dan rumus selisih.
 
-**Status pembaruan dokumen 13 Oktober 2026:** 58 skenario tetap dipertahankan; bukti baru VL-18 dan PS-08 telah dicatat dengan pembedaan antara hasil yang dikonfirmasi tim dan yang ditampilkan secara visual. Regresi validasi telah dikonfirmasi lulus oleh tim, sedangkan pada ZIP yang diperiksa screenshot PS-08 masih berupa penyiapan error. Tim telah mengonfirmasi hasil sesungguhnya lulus dan menyatakan screenshot sudah diganti di laptop.
+**Status pembaruan dokumen 13 Oktober 2026:** 58 skenario awal tetap dipertahankan dan 16 skenario Change Request telah dicatat tanpa menyamakan nomor dan dataset analisis dengan 10 tes otomatis Alif. Hasil `node --test` terakhir yang dikonfirmasi tim adalah **61 lulus, 0 gagal**. Bukti lama VL-18 dan PS-08 tetap dibedakan antara pelaksanaan yang dilaporkan dan dokumentasi visual yang tersedia pada arsip yang pernah diperiksa.
 
 ### Pembaruan PS-08 dan VL-18 setelah konfirmasi pembimbing
 
-- **PS-08:** sistem dilaporkan menampilkan pesan gagal menyimpan setelah penyimpanan sengaja dibuat gagal; percobaan yang gagal tidak menambah riwayat. Guru pembimbing menyatakan screenshot pengganti telah dibuat. Gambar yang terdapat pada ZIP audit 13 Oktober masih menampilkan tahap aktivasi error; cocokkan kembali gambar terbaru sebelum diunggah.
+- **PS-08:** sistem dilaporkan menampilkan pesan gagal menyimpan setelah penyimpanan sengaja dibuat gagal; percobaan yang gagal tidak menambah riwayat. Guru pembimbing menyatakan screenshot pengganti telah dibuat. Gambar pada ZIP pemeriksaan terdahulu masih menampilkan tahap aktivasi error; keberadaan versi pengganti didasarkan pada keterangan pembimbing, bukan inspeksi terhadap file pengganti.
 - **VL-18:** input threshold bawah `-1` ditolak dan pesan validasi tampak pada screenshot `VL-18.png` yang memang ada dalam arsip. Tim melaporkan data tersimpan dan riwayat tidak berubah.
 - **UI-01–UI-06:** seluruhnya dilaporkan lulus, dan bukti pendukung dikelompokkan pada folder `Uji Navigasi dan Uji Pemeriksaan Tampilan HP dan Dekstop`.
 - **UI-07–UI-08:** dilaporkan lulus berdasarkan pemeriksaan langsung tanpa screenshot khusus. README yang direvisi tetap harus diikuti ulang pada clone bersih agar keterangannya sesuai versi kode terakhir.

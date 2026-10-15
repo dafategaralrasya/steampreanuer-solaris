@@ -108,9 +108,15 @@ function hitungRingkasan(keranjang, member) {
   return { subtotal, diskon, ppn, total };
 }
 
+
 function hitungKembalian(total, bayar) {
+  if (bayar < total) {
+    throw new Error("Uang pembayaran kurang");
+  }
+
   return bayar - total;
 }
+
 
 // Agar bisa dipakai di Node.js untuk pengujian.
 if (typeof module !== "undefined") {

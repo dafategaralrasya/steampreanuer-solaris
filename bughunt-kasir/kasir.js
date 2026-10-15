@@ -76,16 +76,21 @@ function hitungSubtotal(keranjang) {
 }
 
 // Diskon belanja dan diskon member.
+
 function hitungDiskon(subtotal, member) {
-  let diskon = 0;
-  if (subtotal > 100000) {
-    diskon += (subtotal * 5) / 100;
-  }
   if (member) {
-    diskon += (subtotal * 10) / 100;
+    return Math.round(subtotal * 0.10);
   }
-  return Math.round(diskon);
+
+  if (subtotal >= 100000) {
+    return Math.round(subtotal * 0.05);
+  }
+
+  return 0;
 }
+
+
+
 
 // PPN 11% dari dasar pengenaan pajak (subtotal setelah diskon).
 function hitungPPN(dasar) {

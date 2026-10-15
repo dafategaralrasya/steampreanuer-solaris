@@ -28,6 +28,7 @@
 **Bukti pengujian:** BH-01, BH-02, dan BH-03 gagal pada kode awal dan lulus setelah perbaikan.
 
 **Commit:** `e110d46` — `perbaikan: validasi dan penjumlahan jumlah pesanan`
+**Ditemukan oleh:** bersama (tim SOLARIS dan bantuan AI)
 
 ## Bug 2 — Aturan diskon tidak sesuai
 
@@ -44,6 +45,7 @@
 **Bukti pengujian:** BH-04 dan BH-05 menguji dua kesalahan utama. BH-06 dan BH-07 memeriksa kondisi tanpa diskon dan pembulatan diskon. Seluruh tes diskon lulus setelah perbaikan.
 
 **Commit:** `668258d` — `perbaikan: diskon eksklusif dan batas minimum belanja`
+**Ditemukan oleh:** bersama (tim SOLARIS dan bantuan AI)
 
 ## Bug 3 — Pembulatan PPN salah
 
@@ -60,6 +62,7 @@
 **Bukti pengujian:** BH-08 sampai BH-10 menguji pembulatan naik, pembulatan turun, dan pengaruh PPN terhadap total. Ketiganya lulus setelah perbaikan.
 
 **Commit:** `e60ad37` — `perbaikan: pembulatan PPN ke rupiah terdekat`
+**Ditemukan oleh:** bersama (tim SOLARIS dan bantuan AI)
 
 ## Bug 4 — Pembayaran kurang tidak ditolak
 
@@ -76,6 +79,7 @@
 **Bukti pengujian:** BH-11 gagal sebelum perbaikan dan lulus setelah perbaikan. BH-12 dan BH-13 memastikan pembayaran tepat dan pembayaran lebih tetap menghasilkan kembalian yang benar.
 
 **Commit:** `71ebc0e` — `perbaikan: tolak pembayaran yang kurang`
+**Ditemukan oleh:** bersama (tim SOLARIS dan bantuan AI)
 
 ## Ringkasan pengujian
 

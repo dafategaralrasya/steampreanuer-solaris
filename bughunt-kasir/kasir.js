@@ -22,25 +22,46 @@ function cariProduk(kode) {
 
 // Menambahkan produk ke keranjang.
 // Jika produk sudah ada di keranjang, jumlahnya ditambahkan.
+
 function tambahItem(keranjang, kode, qty) {
   const produk = cariProduk(kode);
+
   if (!produk) {
     throw new Error("Produk tidak ditemukan");
   }
 
+  const teksQty = String(qty).trim();
+
+  if (!/^\d+$/.test(teksQty)) {
+    throw new Error("Jumlah harus bilangan bulat dari 1 sampai 99");
+  }
+
+  const jumlah = Number(teksQty);
+
+  if (!Number.isInteger(jumlah) || jumlah < 1 || jumlah > 99) {
+    throw new Error("Jumlah harus bilangan bulat dari 1 sampai 99");
+  }
+
   const itemLama = keranjang.find((i) => i.kode === kode);
+
   if (itemLama) {
-    itemLama.qty += qty;
+    if (itemLama.qty + jumlah > 99) {
+      throw new Error("Jumlah per produk tidak boleh melebihi 99");
+    }
+
+    itemLama.qty += jumlah;
   } else {
     keranjang.push({
       kode: produk.kode,
       nama: produk.nama,
       harga: produk.harga,
-      qty: qty,
+      qty: jumlah,
     });
   }
+
   return keranjang;
 }
+
 
 function hapusItem(keranjang, kode) {
   return keranjang.filter((i) => i.kode !== kode);

@@ -153,3 +153,10 @@ Logo SOLARIS dinyatakan sebagai aset identitas tim. Belum ada berkas `LICENSE` p
 | Zaskia Aulia Putri Sheprida | XI ELIN 2 | Antarmuka, dokumentasi, dan pemeriksaan tampilan |
 
 Pembagian tugas tidak membatasi kewajiban setiap anggota untuk memahami serta menjelaskan bagian kode yang berbeda.
+
+
+## Hasil Bug Hunt - Kasir Kantin STEAM
+Bug Hunt dilaksanakan pada 15 Oktober 2026. Empat bug diperbaiki dalam batas waktu 60 menit.
+Hasil pengujian: 14 tes lulus, 0 gagal. Seluruh perbaikan telah digabungkan ke main melalui Pull Request #14.
+Perintah pengujian: node --test bughunt-kasir/tes/*.test.js
+Dokumentasi lengkap: [Catatan Bug Hunt](bughunt-kasir/catatan-bug.md)
